@@ -59,3 +59,11 @@ const renderOperations = (operations) => {
     hideElement(["#width-operations"]);
   }
 };
+
+//Agregar operaciones
+const addOperation = () => {
+  const currentData = getData("operations"); // pido la info
+  currentData.push(saveOperationsInfo()); // modifico la info
+  setData("operations", currentData); // mando la data
+  renderOperations(currentData); // aca aparece la tabla pintada pero undifine
+};
