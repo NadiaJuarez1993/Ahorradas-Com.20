@@ -134,3 +134,34 @@ const deleteOperation = (operationId) => {
   setData("operations", currentData);
   window.location.reload();
 };
+
+*CATEGORIAS*/
+/*categorias preestablecidas*/
+const defaultCategories = [
+  {
+    id: randomId(), //genera id dinamico
+    categoryName: "Comida",
+  },
+  {
+    id: randomId(),
+    categoryName: "Servicios",
+  },
+  {
+    id: randomId(),
+    categoryName: "Salidas",
+  },
+  {
+    id: randomId(),
+    categoryName: "Educacion",
+  },
+  {
+    id: randomId(),
+    categoryName: "Transporte",
+  },
+  {
+    id: randomId(),
+    categoryName: "Trabajo",
+  },
+];
+
+const allCategories = getData("categories") || defaultCategories;
