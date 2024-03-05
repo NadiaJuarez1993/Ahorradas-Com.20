@@ -193,3 +193,18 @@ const renderCategoryOptions = (categories) => {
     `;
   }
 };
+
+const saveCategoryInfo = (categoryId) => {
+  return {
+    id: categoryId ? categoryId : randomId(),
+    categoryName: $("#category-input").value,
+  };
+};
+
+const addCategory = () => {
+  const currentData = getData("categories");
+  currentData.push(saveCategoryInfo());
+  setData("categories", currentData);
+  renderCategoryOptions(currentData);
+  renderCategoriesTable(currentData);
+};
