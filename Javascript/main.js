@@ -67,3 +67,16 @@ const addOperation = () => {
   setData("operations", currentData); // mando la data
   renderOperations(currentData); // aca aparece la tabla pintada pero undifine
 };
+
+/*GUARDAR OPERACION*/
+const saveOperationsInfo = (operationId) => {
+  return {
+    id: operationId ? operationId : randomId(), //tengo user id, entonces guardame ese id que paso por parametro y sino pasame un id nuevo
+    description: $("#description-input").value,
+    amount: $("#amount-input").value,
+    type: $("#type-input").value,
+    category: $("#category-input").value,
+    date: $("#date-input").value,
+  };
+};
+//en el boton de editar le paso el ID por parametro onclick="showFormEdit('${operation.id}')" a la funciom, el id lo recibo en la funcion const showFormEdit = (operationsId) y asi definimos parametro
