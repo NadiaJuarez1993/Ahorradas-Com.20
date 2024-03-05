@@ -135,7 +135,7 @@ const deleteOperation = (operationId) => {
   window.location.reload();
 };
 
-*CATEGORIAS*/
+/*CATEGORIAS*/
 /*categorias preestablecidas*/
 const defaultCategories = [
   {
@@ -165,3 +165,31 @@ const defaultCategories = [
 ];
 
 const allCategories = getData("categories") || defaultCategories;
+
+const renderCategoriesTable = (categories) => {
+  cleanContainer("#table-category");
+  for (const category of categories) {
+    $("#table-category").innerHTML += `
+     <tr>          
+     <td class="text-green-500 w-3/6 my-5">${category.categoryName}
+     </td>
+        <td class="flex flex-row ">
+           <button class="rounded-none bg-inherit text-blue-600 hover:text-black mr-3 w-3/6 my-5 pl-11" onclick="showEditCategory('${category.id}')" ><a>Editar</a></button>
+            <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showDeleteCategoryModal('${category.id}', '${category.categoryName}')"><a>Eliminar</a></button>
+         </td>
+    </tr>
+   `;
+  }
+};
+
+const renderCategoryOptions = (categories) => {
+  cleanContainer("#category-input");
+  for (const category of categories) {
+    $("#category-input").innerHTML += `
+    <option value="${category.id}">${category.categoryName}</option>
+    `;
+    $("#filter-category").innerHTML += `
+    <option value="${category.id}">${category.categoryName}</option>
+    `;
+  }
+};
