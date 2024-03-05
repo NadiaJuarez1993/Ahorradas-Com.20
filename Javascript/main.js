@@ -231,3 +231,22 @@ const editCategory = () => {
   renderCategoriesTable(currentData);
 };
 
+const showDeleteCategoryModal = (categoryId, CategoryDelete) => {
+  showElement(["#delete-category-modal"]);
+  hideElement(["#category-view"]);
+  $("#btn-delete-category").setAttribute("data-id", categoryId);
+  $("#category-name").innerText = `${CategoryDelete}`;
+  $("#btn-delete-category").addEventListener("click", () => {
+    const categoryId = $("#btn-delete-category").getAttribute("data-id");
+    deleteCategory(categoryId);
+    window.location.reload();
+  });
+};
+
+const deleteCategory = (categoryId) => {
+  const currentData = getData("categories").filter(
+    (category) => category.id != categoryId
+  );
+  setData("categories", currentData);
+  window.location.reload();
+};
