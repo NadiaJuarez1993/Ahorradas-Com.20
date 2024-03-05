@@ -16,3 +16,10 @@ const hideElement = (selectors) => {
     $(selector).classList.add("hidden");
   }
 };
+
+//SETEA Y TRAE INFO DEL LOCAL STORAGE
+const getData = (key) => JSON.parse(localStorage.getItem(key));
+const setData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+
+//INICIALIZACION DE NUESTROS USUARIOS
+const allOperations = getData("operations") || []; //logica para pintar tabla: PEDIMOS INFO AL LOCAL STORAGE, SI TRAE INFO SE GUARDA EN VARIABLE ALL USERS Y SI NO SE CUMPLE SE GUARDA EN EL ARRAY VACIO
