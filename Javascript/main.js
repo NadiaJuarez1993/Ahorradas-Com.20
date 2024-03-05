@@ -80,3 +80,24 @@ const saveOperationsInfo = (operationId) => {
   };
 };
 //en el boton de editar le paso el ID por parametro onclick="showFormEdit('${operation.id}')" a la funciom, el id lo recibo en la funcion const showFormEdit = (operationsId) y asi definimos parametro
+
+const showFormEdit = (operationId) => {
+  //CAMBIO DE PANTALLA
+  hideElement(["#main-view", "#btn-add-operation", "#new-opration-title"]);
+  showElement([
+    "#new-oparation-form",
+    "#btn-edit-operation",
+    "#edit-opration-title",
+  ]);
+  //LE PASAMOS EL ID AL BOTON EDITAR DEL FORM
+  $("#btn-edit-operation").setAttribute("data-id", operationId);
+  // PEDIMOS Y ENCONTRAMOS EL USUARIOJ
+  const operationSelected = getData("operations").find(
+    (operation) => operation.id === operationId
+  ); //pido la  info al local storage y ejecuto la funcion find y pregunto si el user.id (editar) y pregunto si operation.id quiero quedarme con el que  estricamente igual a  operationsId
+  $("#description-input").value = operationSelected.description; //precargo el formulario con esa info
+  $("#amount-input").valueAsNumber = operationSelected.amount; //precargo el formulario con esa info
+  $("#type-input").value = operationSelected.type;
+  $("#category-input").value = operationSelected.category; //precargo el formulario con esa info
+  $("#date-input").value = operationSelected.date; //precargo el formulario con esa info
+};
