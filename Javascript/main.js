@@ -113,3 +113,15 @@ const editOperation = () => {
   });
   setData("operations", currentData);
 };
+
+//mostrar ventana modal
+const showDeleteModal = (operationId, operationDescription) => {
+  showElement(["#delete-modal"]);
+  hideElement(["#main-view", "#btn-add-operation", "#new-opration-title"]);
+  $("#btn-delete").setAttribute("data-id", operationId); //paso de id  en ambos eliminar
+  $("#operation-name").innerText = `${operationDescription}`;
+  $("#btn-delete").addEventListener("click", () => {
+    const operationId = $("#btn-delete").getAttribute("data-id"); //tomo el id de la operacion
+    deleteOperation(operationId); //eliminacion
+  });
+};
