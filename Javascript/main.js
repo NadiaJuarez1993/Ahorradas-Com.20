@@ -208,3 +208,26 @@ const addCategory = () => {
   renderCategoryOptions(currentData);
   renderCategoriesTable(currentData);
 };
+
+const showEditCategory = (categoryId) => {
+  showElement(["#edit-categoy"]);
+  hideElement(["#category-view"]);
+  $("#btn-confirm-edit-category").setAttribute("data-id", categoryId);
+  const categorySelected = getData("categories").find(
+    (category) => category.id === categoryId
+  );
+  $("#category-input").value = categorySelected.categoryName;
+};
+
+const editCategory = () => {
+  const categoryId = $("#btn-confirm-edit-category").getAttribute("data-id");
+  const currentData = getData("categories").map((category) => {
+    if (category.id === categoryId) {
+      return saveCategoryInfo(categoryId);
+    }
+    return category;
+  });
+  setData("categories", currentData);
+  renderCategoriesTable(currentData);
+};
+
