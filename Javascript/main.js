@@ -250,3 +250,121 @@ const deleteCategory = (categoryId) => {
   setData("categories", currentData);
   window.location.reload();
 };
+
+/*EVENTS*/
+const initializeApp = () => {
+  setData("operations", allOperations);
+  renderOperations(allOperations);
+
+  setData("categories", allCategories);
+  renderCategoriesTable(allCategories);
+  renderCategoryOptions(allCategories);
+
+  $("#new-operation-btn").addEventListener("click", () => {
+    // cambio de pantalla para agregar nueva operacion
+    showElement(["#new-oparation-form"]);
+    hideElement(["#main-view"]);
+  });
+
+  $("#btn-add-operation").addEventListener("click", (e) => {
+    e.preventDefault(); // no recargar el form
+    addOperation();
+    hideElement(["#new-oparation-form"]);
+    showElement(["#main-view"]);
+    window.location.reload();
+  });
+
+  $("#btn-cancel-operation").addEventListener("click", () => {
+    hideElement(["#new-oparation-form"]);
+    showElement(["#main-view"]);
+  });
+
+  //BOTON EDITAR OPERACION EN FORMULARIO
+  $("#btn-edit-operation").addEventListener("click", (e) => {
+    e.preventDefault();
+    editOperation();
+    window.location.reload(); // RECARGAMOS LA PAGINA
+  });
+
+  $("#btn-confirm-edit-category").addEventListener("click", (e) => {
+    e.preventDefault();
+    editCategory();
+    window.location.reload(); // RECARGAMOS LA PAGINA
+  });
+
+  //boton de cerrar ventana modal
+  $("#btn-close-modal").addEventListener("click", () => {
+    hideElement(["#delete-modal"]);
+    showElement(["#main-view"]);
+  });
+
+  $("#btn-cancel-modal").addEventListener("click", () => {
+    hideElement(["#delete-modal"]);
+    showElement(["#main-view"]);
+  });
+
+  $("#btn-category").addEventListener("click", () => {
+    hideElement(["#main-view"]);
+    showElement(["#category-view"]);
+  });
+
+  $("#btn-add-category").addEventListener("click", (e) => {
+    addCategory();
+    $("#category-input").value = "";
+  });
+
+  $("#btn-balance").addEventListener("click", () => {
+    showElement(["#main-view"]);
+    hideElement(["#category-view", "#new-oparation-form"]);
+  });
+
+  $("#btn-hamburguer-menu").addEventListener("click", () => {
+    showElement(["#nav-bar", "#btn-close-menu"]);
+    hideElement(["#btn-hamburguer-menu"]);
+  });
+
+  $("#btn-close-menu").addEventListener("click", () => {
+    showElement(["#btn-hamburguer-menu"]);
+    hideElement(["#nav-bar", "#btn-close-menu"]);
+  });
+
+  $("#btn-confirm-edit-category").addEventListener("click", () => {
+    e.preventDefault();
+    editCategory();
+    window.location.reload();
+  });
+
+  $("#btn-cancel-edit-category").addEventListener("click", () => {
+    showElement(["#category-view "]);
+    hideElement(["#edit-categoy"]);
+  });
+
+  $("#btn-cancel-delete-category-modal").addEventListener("click", () => {
+    showElement(["#category-view "]);
+    hideElement(["#delete-category-modal"]);
+  });
+
+  $("#btn-close-delete-category-modal").addEventListener("click", () => {
+    showElement(["#category-view "]);
+    hideElement(["#delete-category-modal"]);
+  });
+
+  $("#filter-hidden").addEventListener("click", () => {
+    hideElement(["#filter-form","#filter-hidden" ]);
+    showElement(["#filter-show"]);
+  });
+
+  $("#filter-show").addEventListener("click", () => {
+    hideElement(["#filter-show"]);
+    showElement(["#filter-form", "#filter-hidden"]);
+  });
+  
+  $("#filter-category").addEventListener("input", (e) => {
+    const categoryId = e.target.value
+    const currentData = getData("operations")
+    const filterOperations = currentData.filter(operations => operations.category === categoryId)
+    renderOperations(filterOperations)
+  }) 
+};
+
+window.addEventListener("load", initializeApp);
