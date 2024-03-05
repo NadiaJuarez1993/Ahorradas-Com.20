@@ -26,3 +26,36 @@ const allOperations = getData("operations") || []; //logica para pintar tabla: P
 
 //funcion de limpieza
 const cleanContainer = (selector) => ($(selector).innerHTML = "");
+
+/*OPERACIONES*/
+const renderOperations = (operations) => {
+  cleanContainer("#operation-table-body")
+  // funcion para tabla de operaciones
+  if (operations.length) {
+    hideElement(["#without-operations"]);
+    showElement(["#width-operations"]);
+    for (const operation of operations) {
+      const categorySelected = getData("categories").find(
+        (category) => category.id === operation.category
+      );
+      const amountType =
+        operation.type === "ganancia" ? "text-green-400" : "text-red-400";
+      const amountSign = operation.type === "ganancia" ? "+$" : "-$";
+      $("#operation-table-body").innerHTML += `
+       <tr>
+         <td class="py-4 font-semibold">${operation.description}></td>
+         <td class="text-green-500 py-2"> <span>${categorySelected.categoryName}</span></td>
+         <td class="py-4">${operation.date}</td>
+         <td class="py-4  ${amountType} ">${amountSign} ${operation.amount}</td>
+         <td class="py-4">
+         <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showFormEdit('${operation.id}')"><a>Editar</a></button>  
+         <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showDeleteModal('${operation.id}', '${operation.description}')"><a>Eliminar</a></button>
+         </td>
+       </tr>  
+       `;
+    }
+  } else {
+    showElement(["#without-operations"]);
+    hideElement(["#width-operations"]);
+  }
+};
