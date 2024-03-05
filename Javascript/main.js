@@ -101,3 +101,15 @@ const showFormEdit = (operationId) => {
   $("#category-input").value = operationSelected.category; //precargo el formulario con esa info
   $("#date-input").value = operationSelected.date; //precargo el formulario con esa info
 };
+
+//editar operaciones
+const editOperation = () => {
+  const operationId = $("#btn-edit-operation").getAttribute("data-id"); //TTOMAMOS EL ID DEL BOTON
+  const currentData = getData("operations").map((operation) => {
+    if (operation.id === operationId) {
+      return saveOperationsInfo(operationId); //TAREMOS LA OERACION MODIFICADOS
+    }
+    return operation;
+  });
+  setData("operations", currentData);
+};
