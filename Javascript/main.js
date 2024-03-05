@@ -125,3 +125,12 @@ const showDeleteModal = (operationId, operationDescription) => {
     deleteOperation(operationId); //eliminacion
   });
 };
+
+//eliminar una operacion
+const deleteOperation = (operationId) => {
+  const currentData = getData("operations").filter(
+    (operation) => operation.id != operationId
+  );
+  setData("operations", currentData);
+  window.location.reload();
+};
