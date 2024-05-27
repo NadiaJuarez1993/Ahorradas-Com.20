@@ -251,6 +251,39 @@ const deleteCategory = (categoryId) => {
   window.location.reload();
 };
 
+/*VALIDATIONS*/
+const validateOperation = () => {
+// const regDescriptionNewOperation = new RegExp(`[/^\s*.*\S.*\s*$/]`); 
+const description= $("#description-input").value.trim()//.trim() quita los espacios qeu puedadn haber en el iput, al principio y al final, no los del medio
+const amount = $("#amount-input").valueAsNumber
+
+const amountRegex = /^-?\d+([.,]\d{1,2})?$/;
+
+if (description === ""){
+showElement(["#invalid-description"]);
+$("#description-input").classList.add("border-red-500");
+}else{
+  hideElement(["#invalid-description"]);
+  $("#description-input").classList.remove("border-red-500");
+}
+
+if (amount === "" || !amountRegex.test(amount) || parseFloat(amount) === 0) {
+  showElement(["#invalid-amount"]);
+  $("#amount-input").classList.add("border-red-500");
+} else {
+  hideElement(["#invalid-amount"]);
+   $("#amount-input").classList.remove("border-red-500");
+}
+
+const passesValidations =
+   description !== "" && amountRegex.test(amount) && parseFloat(amount) !== 0;
+ return passesValidations; 
+}
+
+ 
+
+
+
 /*EVENTS*/
 const initializeApp = () => {
   setData("operations", allOperations);
@@ -268,10 +301,12 @@ const initializeApp = () => {
 
   $("#btn-add-operation").addEventListener("click", (e) => {
     e.preventDefault(); // no recargar el form
-    addOperation();
-    hideElement(["#new-oparation-form"]);
-    showElement(["#main-view"]);
-    window.location.reload();
+    if (validateOperation ()) {
+         addOperation();
+         hideElement(["#new-oparation-form"]);
+         showElement(["#main-view"]);
+         $("#new-oparation-form").reset();
+    }  
   });
 
   $("#btn-cancel-operation").addEventListener("click", () => {
