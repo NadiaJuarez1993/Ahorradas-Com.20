@@ -2,6 +2,9 @@
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => document.querySelectorAll(selector);
 
+
+
+
 //GENERA id DINAMICO EN CADA USO
 const randomId = () => self.crypto.randomUUID();
 
@@ -43,13 +46,13 @@ const renderOperations = (operations) => {
       const amountSign = operation.type === "ganancia" ? "+$" : "-$";
       $("#operation-table-body").innerHTML += `
        <tr>
-         <td class="py-4 font-semibold">${operation.description}></td>
+         <td class="py-4 font-semibold">${operation.description}</td>
          <td class="text-green-500 py-2"> <span>${categorySelected.categoryName}</span></td>
          <td class="py-4">${operation.date}</td>
          <td class="py-4  ${amountType} ">${amountSign} ${operation.amount}</td>
          <td class="py-4">
-         <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showFormEdit('${operation.id}')"><a>Editar</a></button>  
-         <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showDeleteModal('${operation.id}', '${operation.description}')"><a>Eliminar</a></button>
+         <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showFormEdit('${operation.id}')"> <a><img  class="w-7 h-7" src="Images/icons-editar.png" alt="image"/> </a> </button>  
+         <button class="rounded-none bg-inherit" onclick="showDeleteModal('${operation.id}', '${operation.description}')"><a><img class="w-7 h-7" src="Images/icons-eliminar.png" alt="image" /></a></button>
          </td>
        </tr>  
        `;
@@ -343,6 +346,8 @@ const initializeApp = () => {
     showElement(["#category-view"]);
   });
 
+  
+
   $("#btn-add-category").addEventListener("click", (e) => {
     addCategory();
     $("#category-input").value = "";
@@ -400,6 +405,12 @@ const initializeApp = () => {
     const filterOperations = currentData.filter(operations => operations.category === categoryId)
     renderOperations(filterOperations)
   }) 
+
+   $("#btn-report").addEventListener("click", () => {
+     hideElement(["#main-view"]);
+     showElement(["#report-view"]);
+   });
+
 };
 
 window.addEventListener("load", initializeApp);

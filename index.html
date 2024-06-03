@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <script src="https://cdn.tailwindcss.com"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.cdnfonts.com/css/breezy-pro" rel="stylesheet" />
     <script
       src="https://kit.fontawesome.com/c9e77d7874.js"
       crossorigin="anonymous"
     ></script>
-    <link rel="shortcut icon" href="./Images/icons-dinero.png" type="image/x-icon" />
-  <title>AhorrADAS</title>
-</head>
- <body class="bg-gray-200">
+    <link
+      rel="shortcut icon"
+      href="./Images/icons-dinero.png"
+      type="image/x-icon"
+    />
+    <title>AhorrADAS</title>
+  </head>
+  <body class="bg-gray-200 font-serif">
     <header class="w-screen bg-emerald-400 h-20 flex justify-between">
       <div class="text-left flex md:text-6xl">
         <i class="fa-solid fa-wallet text-white text-3xl mx-3 mt-3"></i>
@@ -39,6 +44,7 @@
             <a href="#"> Categorías </a>
           </li>
           <li
+            id="btn-report"
             class="text-black pb-2 hover:bg-teal-100 p-1 md:text-xl xl:text-white xl:hover:bg-emerald-500 xl:rounded-lg xl:pt-6 xl:flex justify-end xl:pl-6 xl:pr-6 xl:text-xl"
           >
             <i class="fa-solid fa-chart-pie pr-3"></i>
@@ -162,6 +168,7 @@
           <div class="bg-gray-100 flex flex-col mx-1 xl:row-span-2 col-span-2">
             <div class="mx-3 my-4 mb-18 flex flex-col bg-gray-100">
               <div class="xl:flex justify-between">
+               
                 <h2 class="text-3xl font-bold">Operaciones</h2>
                 <button
                   id="new-operation-btn"
@@ -248,8 +255,13 @@
                   type="text"
                 />
               </article>
-              
-              <p class="text-sm text-red-600 hidden" id="invalid-description"><i class="text-sm text-red-600 fa-solid fa-circle-exclamation" ></i>  Por favor complete este campo.</p>
+
+              <p class="text-sm text-red-600 hidden" id="invalid-description">
+                <i
+                  class="text-sm text-red-600 fa-solid fa-circle-exclamation"
+                ></i>
+                Por favor complete este campo.
+              </p>
               <label class="my-3 flex justify-between font-bold md:text-l">
                 Monto
               </label>
@@ -261,7 +273,12 @@
                   placeholder="$0"
                 />
               </article>
-              <p class="text-sm text-red-600 hidden" id="invalid-amount"><i class="text-sm text-red-600 fa-solid fa-circle-exclamation" ></i>  Por favor indique el monto.</p>
+              <p class="text-sm text-red-600 hidden" id="invalid-amount">
+                <i
+                  class="text-sm text-red-600 fa-solid fa-circle-exclamation"
+                ></i>
+                Por favor indique el monto.
+              </p>
               <!-- tipo -->
               <div>
                 <label class="my-3 flex justify-between font-bold md:text-l"
@@ -467,6 +484,114 @@
           </div>
         </div>
       </div>
+      <!-- REPORT -->
+      <section id="report-view" class="flex m-1 flex flex-col hidden mt-10">
+        <div
+          class="w-4/5 h-4/5 mt-20 bg-slate-50 rounded border shadow-2xl p-3 md:w-3/ 4 xl:w-1/2"
+        >
+          <h2
+            id="new-opration-title"
+            class="text-4xl text-center font-bold mb-6 mt-4 md:text-left text-3xl p-3"
+          >
+            Reportes
+          </h2>
+          <!-- ventana sin operciones -->
+           <div
+                id="without-operations-report"
+                class="flex justify-center mt-8 mb-1"
+              >
+                <div class="flex flex-col justify-center text-center">
+                  <img src="Images/image-1.png" alt="image" />
+                  <h4
+                    class="flex justify-center text-xl font-semibold mt-5 mb-4"
+                  >
+                    Operaciones insuficientes
+                  </h4>
+                  <p>Prueba agregando más operaciones</p>
+                </div>
+              </div>
+
+              <!-- Ventana REPORTES CON DATOS-->
+
+               <div id="reports-results" class="w-4/5 h-4/5 mt-20 bg-slate-50 rounded border shadow-2xl p-3 md:w-3/ 4 xl:w-1/2">
+                  <h2 id="new-opration-title" class="text-4xl text-center font-bold mb-6 mt-4 md:text-left text-3xl p-3"> Reportes </h2>
+                <div class="text-xs">
+                    <h4 class="text-xl font-semibold pb-8">Resumen</h4>
+                    <div class="sm:text-base">
+                        <div class="flex mb-2 items-center h-full">
+                            <div class="w-1/3 p-1 mr-3 font-bold">Categoria con mayor ganancia</div>
+                            <div id="higher-earnings-category" class="w-1/4 p-1 text-center sm:text-sm rounded bg-green-100"
+                                ></div>
+                            <div id="higher-earnings-amount" class="w-1/4 p-1 text-right text-green-500 font-bold" >
+                            </div>
+                        </div>
+                        <div class="flex mb-2 items-center h-full">
+                            <div class="w-1/3 p-1 mr-3 font-bold">Categoria con mayor gasto</div>
+                            <div id="higher-expenses-category" class="w-1/4 py-1 text-center sm:text-sm rounded bg-green-100"
+                                ></div>
+                            <div id="higher-expenses-amount" class="w-1/4 py-1 text-right text-red-500 font-bold" >
+                            </div>
+                        </div>
+                        <div class="flex mb-2 items-center h-full">
+                            <div class="w-1/3 p-1 mr-3 font-bold">Categoria con mayor balance</div>
+                            <div  id="higher-balance-category" class="w-1/4 py-1 text-center sm:text-sm rounded bg-green-100"
+                               ></div>
+                            <div id="higher-balance-amount" class="w-1/4 py-1 text-right font-bold" ></div>
+                        </div>
+                        <div class="flex mb-2 items-center h-full">
+                            <div class="w-1/3 p-1 mr-3 font-bold">Mes con mayor ganancia</div>
+                            <div id="higher-earnings-month" class="w-1/4 p-1 text-center sm:text-sm" ></div>
+                            <div id="higher-earnings-month-amount" class="w-1/4 p-1 text-right text-green-500 font-bold"
+                                ></div>
+                        </div>
+                        <div class="flex mb-2 items-center h-full">
+                            <div class="w-1/3 p-1 mr-3 font-bold">Mes con mayor gasto</div>
+                            <div id="higher-expenses-month" class="w-1/4 p-1 text-center sm:text-sm" ></div>
+                            <div id="higher-expenses-month-amount" class="w-1/4 p-1 text-right text-red-500 font-bold" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold pb-8 pt-8">Totales por categorías</h4>
+                    <table class="w-full text-xs sm:text-base">
+                        <thead>
+                            <tr class="flex justify-items-end">
+                                <th class="w-1/4 mr-1 text-left">Categoría</th>
+                                <th class="w-1/4 mr-1">Ganancias</th>
+                                <th class="w-1/4 mr-1">Gastos</th>
+                                <th class="w-1/4">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-totals-categories">
+
+                        </tbody>
+
+                    </table>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold pb-8 pt-8">Totales por mes</h4>
+                    <table class="w-full text-xs sm:text-base">
+                        <thead>
+                            <tr class="flex justify-items-end">
+                                <th class="w-1/4 mr-1 text-left">Mes</th>
+                                <th class="w-1/4 mr-1">Ganancias</th>
+                                <th class="w-1/4 mr-1">Gastos</th>
+                                <th class="w-1/4">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-totals-month">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        </section>
+          
+        </div>
+      </section>
     </main>
     <script src="./Javascript/main.js"></script>
   </body>
