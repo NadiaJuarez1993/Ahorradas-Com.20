@@ -2,9 +2,6 @@
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => document.querySelectorAll(selector);
 
-
-
-
 //GENERA id DINAMICO EN CADA USO
 const randomId = () => self.crypto.randomUUID();
 
@@ -32,7 +29,7 @@ const cleanContainer = (selector) => ($(selector).innerHTML = "");
 
 /*OPERACIONES*/
 const renderOperations = (operations) => {
-  cleanContainer("#operation-table-body")
+  cleanContainer("#operation-table-body");
   // funcion para tabla de operaciones
   if (operations.length) {
     hideElement(["#without-operations"]);
@@ -256,36 +253,91 @@ const deleteCategory = (categoryId) => {
 
 /*VALIDATIONS*/
 const validateOperation = () => {
-// const regDescriptionNewOperation = new RegExp(`[/^\s*.*\S.*\s*$/]`); 
-const description= $("#description-input").value.trim()//.trim() quita los espacios qeu puedadn haber en el iput, al principio y al final, no los del medio
-const amount = $("#amount-input").valueAsNumber
+  // const regDescriptionNewOperation = new RegExp(`[/^\s*.*\S.*\s*$/]`);
+  const description = $("#description-input").value.trim(); //.trim() quita los espacios qeu puedadn haber en el iput, al principio y al final, no los del medio
+  const amount = $("#amount-input").valueAsNumber;
 
-const amountRegex = /^-?\d+([.,]\d{1,2})?$/;
+  const amountRegex = /^-?\d+([.,]\d{1,2})?$/;
 
-if (description === ""){
-showElement(["#invalid-description"]);
-$("#description-input").classList.add("border-red-500");
-}else{
-  hideElement(["#invalid-description"]);
-  $("#description-input").classList.remove("border-red-500");
-}
+  if (description === "") {
+    showElement(["#invalid-description"]);
+    $("#description-input").classList.add("border-red-500");
+  } else {
+    hideElement(["#invalid-description"]);
+    $("#description-input").classList.remove("border-red-500");
+  }
 
-if (amount === "" || !amountRegex.test(amount) || parseFloat(amount) === 0) {
-  showElement(["#invalid-amount"]);
-  $("#amount-input").classList.add("border-red-500");
-} else {
-  hideElement(["#invalid-amount"]);
-   $("#amount-input").classList.remove("border-red-500");
-}
+  if (amount === "" || !amountRegex.test(amount) || parseFloat(amount) === 0) {
+    showElement(["#invalid-amount"]);
+    $("#amount-input").classList.add("border-red-500");
+  } else {
+    hideElement(["#invalid-amount"]);
+    $("#amount-input").classList.remove("border-red-500");
+  }
 
-const passesValidations =
-   description !== "" && amountRegex.test(amount) && parseFloat(amount) !== 0;
- return passesValidations; 
-}
+  const passesValidations =
+    description !== "" && amountRegex.test(amount) && parseFloat(amount) !== 0;
+  return passesValidations;
+};
 
- 
+/*REPORTES*/
+
+/*Categoría con mayor ganancia*/
+
+const higherEarningsCategory = (operations) => {
+  const allOperations = getData("operations") || []; //Se obtienen todas las operaciones y categorías almacenadas. Si no se encuentran datos, se inicializan como arreglos vacíos.
+  const allCategories = getData("categories") || [];
+
+  //Se recorren todas las operaciones para calcular las ganancias por categoría. Si la operación es de tipo "ganancia", se suma el monto a la categoría correspondiente.
+  const earningByCategory = {};
+  for (const operation of allOperations) {
+    if (operation.type === "ganancia") {
+      const category = String(operation.category);
+      if (earningByCategory[operation.category]) {
+        earningByCategory[operation.category] += operation.amount;
+      } else {
+        earningByCategory[operation.category] = operation.amount;
+      }
+    }
+  }
+
+  //Se recorren las ganancias por categoría para encontrar cuál tiene el monto más alto. Se busca el nombre de la categoría correspondiente usando su ID.
+  let highestEarningsCategory = " ";
+  let highestEarningsAmount = 0;
+  for (const categoryId in earningByCategory) {
+    const categoryName = allCategories.find(
+      (category) => String (category.id) === categoryId
+    )?.categoryName;
+
+    if (earningByCategory[categoryId] > highestEarningsAmount) {
+      highestEarningsAmount = earningByCategory[categoryId];
+      highestEarningsCategory = categoryName;
+    }
+  }
+
+  return { highestEarningsCategory, highestEarningsAmount };
+};
 
 
+
+const showReports = (operations) => {
+  const allOperations = operations || getData("operations") || [];
+
+  const earnings = allOperations.filter(
+    (operation) => operation.type === "ganancia"
+  );
+  const expenses = allOperations.filter(
+    (operation) => operation.type === "gasto"
+  );
+
+  if (earnings.length >= 1 && expenses.length >= 1) {
+    showElement(["#reports-results"]);
+    hideElement(["#reports-no-results"]);
+  } else {
+    showElement(["#reports-no-results"]);
+    hideElement(["#reports-results"]);
+  }
+};
 
 /*EVENTS*/
 const initializeApp = () => {
@@ -304,12 +356,12 @@ const initializeApp = () => {
 
   $("#btn-add-operation").addEventListener("click", (e) => {
     e.preventDefault(); // no recargar el form
-    if (validateOperation ()) {
-         addOperation();
-         hideElement(["#new-oparation-form"]);
-         showElement(["#main-view"]);
-         $("#new-oparation-form").reset();
-    }  
+    if (validateOperation()) {
+      addOperation();
+      hideElement(["#new-oparation-form"]);
+      showElement(["#main-view"]);
+      $("#new-oparation-form").reset();
+    }
   });
 
   $("#btn-cancel-operation").addEventListener("click", () => {
@@ -345,8 +397,6 @@ const initializeApp = () => {
     hideElement(["#main-view"]);
     showElement(["#category-view"]);
   });
-
-  
 
   $("#btn-add-category").addEventListener("click", (e) => {
     addCategory();
@@ -390,7 +440,7 @@ const initializeApp = () => {
   });
 
   $("#filter-hidden").addEventListener("click", () => {
-    hideElement(["#filter-form","#filter-hidden" ]);
+    hideElement(["#filter-form", "#filter-hidden"]);
     showElement(["#filter-show"]);
   });
 
@@ -398,19 +448,20 @@ const initializeApp = () => {
     hideElement(["#filter-show"]);
     showElement(["#filter-form", "#filter-hidden"]);
   });
-  
+
   $("#filter-category").addEventListener("input", (e) => {
-    const categoryId = e.target.value
-    const currentData = getData("operations")
-    const filterOperations = currentData.filter(operations => operations.category === categoryId)
-    renderOperations(filterOperations)
-  }) 
+    const categoryId = e.target.value;
+    const currentData = getData("operations");
+    const filterOperations = currentData.filter(
+      (operations) => operations.category === categoryId
+    );
+    renderOperations(filterOperations);
+  });
 
-   $("#btn-report").addEventListener("click", () => {
-     hideElement(["#main-view"]);
-     showElement(["#report-view"]);
-   });
-
+  $("#btn-report").addEventListener("click", () => {
+    hideElement(["#main-view"]);
+    showElement(["#report-view"]);
+  });
 };
 
 window.addEventListener("load", initializeApp);
