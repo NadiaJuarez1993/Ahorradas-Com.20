@@ -284,39 +284,53 @@ const validateOperation = () => {
 
 /*Categoría con mayor ganancia*/
 
-const higherEarningsCategory = (operations) => {
-  const allOperations = getData("operations") || []; //Se obtienen todas las operaciones y categorías almacenadas. Si no se encuentran datos, se inicializan como arreglos vacíos.
+const highestProfitCategory = (operations) => {
+  const allOperations = getData("operations") || [];
+  //Se obtienen todas las operaciones y categorías almacenadas. Si no se encuentran datos, se inicializan como arreglos vacíos.
   const allCategories = getData("categories") || [];
 
   //Se recorren todas las operaciones para calcular las ganancias por categoría. Si la operación es de tipo "ganancia", se suma el monto a la categoría correspondiente.
-  const earningByCategory = {};
+  const profitByCategory = {};
   for (const operation of allOperations) {
     if (operation.type === "ganancia") {
       const category = String(operation.category);
-      if (earningByCategory[operation.category]) {
-        earningByCategory[operation.category] += operation.amount;
+      if (profitByCategory[operation.category]) {
+        profitByCategory[operation.category] += operation.amount;
       } else {
-        earningByCategory[operation.category] = operation.amount;
+        profitByCategory[operation.category] = operation.amount;
       }
     }
   }
 
   //Se recorren las ganancias por categoría para encontrar cuál tiene el monto más alto. Se busca el nombre de la categoría correspondiente usando su ID.
-  let highestEarningsCategory = " ";
-  let highestEarningsAmount = 0;
-  for (const categoryId in earningByCategory) {
+  let highestProfitCategory = " ";
+  let highestProfitAmount = 0;
+  for (const categoryId in profitByCategory) {
     const categoryName = allCategories.find(
-      (category) => String (category.id) === categoryId
+      (category) => String(category.id) === categoryId
     )?.categoryName;
 
-    if (earningByCategory[categoryId] > highestEarningsAmount) {
-      highestEarningsAmount = earningByCategory[categoryId];
-      highestEarningsCategory = categoryName;
+    if (profitByCategory[categoryId] > highestProfitAmount) {
+      highestProfitAmount = profitByCategory[categoryId];
+      highestProfitCategory = categoryName;
     }
   }
 
-  return { highestEarningsCategory, highestEarningsAmount };
-};
+  //Se devuelve un objeto con el nombre de la categoría con mayores ganancias y el monto de estas.
+  return { highestProfitCategory, highestProfitAmount };
+}
+;
+
+/*Renderizar categoría con mayor ganancia*/
+const renderHigherProfitCategory = (getHigherProfitCategory) =>{
+  const {highestProfitCategory, highestProfitAmount} = getHigherProfitCategory()
+
+  $("#higher-profit-category").innerText = highestProfitCategory || "N/A";
+   $("#higher-profit-amount").innerText = `+$${highestProfitAmount.toFixed(
+     2
+   )}`;
+}
+
 
 
 
