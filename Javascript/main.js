@@ -318,19 +318,50 @@ const highestProfitCategory = (operations) => {
 
   //Se devuelve un objeto con el nombre de la categoría con mayores ganancias y el monto de estas.
   return { highestProfitCategory, highestProfitAmount };
-}
-;
-
+};
 /*Renderizar categoría con mayor ganancia*/
-const renderHigherProfitCategory = (getHigherProfitCategory) =>{
-  const {highestProfitCategory, highestProfitAmount} = getHigherProfitCategory()
+const renderHigherProfitCategory = (getHigherProfitCategory) => {
+  const { highestProfitCategory, highestProfitAmount } =
+    getHigherProfitCategory();
 
   $("#higher-profit-category").innerText = highestProfitCategory || "N/A";
-   $("#higher-profit-amount").innerText = `+$${highestProfitAmount.toFixed(
-     2
-   )}`;
-}
+  $("#higher-profit-amount").innerText = `+$${highestProfitAmount.toFixed(2)}`;
+};
 
+/*Category with the highest spending*/
+const higherExpenseCategory = (operations) => {
+  const allOperations = getData("operations") || [];
+  const allCategories = getData("categories") || [];
+  const expensesByCategory = {};
+
+  for (const operation of allOperations) {
+
+    //Si la operación es de tipo "gasto", se verifica si ya existe un gasto registrado para la categoría de la operación en expensesByCategory.
+    //Si existe, se agrega el monto de la operación al gasto existente de esa categoría. Si no existe, se inicializa el gasto de esa categoría con el monto de la operación.
+    if (operation.type === "gasto") {
+      if (expensesByCategory[operation.category]) {
+        expensesByCategory[operation.category] += operation.amount;
+      } else {
+        expensesByCategory[operation.category] = operation.amount;
+      }
+    }
+  }
+
+  let highestExpenseCategory = "";
+  let highestExpenseAmount = 0;
+
+  for (const categoryId in expensesByCategory) {
+    const categoryName = allCategories.find(
+      (category) => category.id === categoryId
+    )?.categoryName;
+
+    if (expensesByCategory[categoryId] > highestExpenseAmount) {
+      highestExpenseAmount = expensesByCategory[categoryId];
+      highestExpenseCategory = categoryName;
+    }
+  }
+  return { highestExpenseCategory, highestExpenseAmount };
+};
 
 
 
@@ -346,9 +377,9 @@ const showReports = (operations) => {
 
   if (earnings.length >= 1 && expenses.length >= 1) {
     showElement(["#reports-results"]);
-    hideElement(["#reports-no-results"]);
+    hideElement(["#without-operations-report"]);
   } else {
-    showElement(["#reports-no-results"]);
+    showElement(["#without-operations-report"]);
     hideElement(["#reports-results"]);
   }
 };
