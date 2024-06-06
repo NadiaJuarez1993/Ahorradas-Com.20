@@ -319,6 +319,7 @@ const highestProfitCategory = (operations) => {
   //Se devuelve un objeto con el nombre de la categoría con mayores ganancias y el monto de estas.
   return { highestProfitCategory, highestProfitAmount };
 };
+
 /*Renderizar categoría con mayor ganancia*/
 const renderHigherProfitCategory = (getHigherProfitCategory) => {
   const { highestProfitCategory, highestProfitAmount } =
@@ -335,7 +336,6 @@ const higherExpenseCategory = (operations) => {
   const expensesByCategory = {};
 
   for (const operation of allOperations) {
-
     //Si la operación es de tipo "gasto", se verifica si ya existe un gasto registrado para la categoría de la operación en expensesByCategory.
     //Si existe, se agrega el monto de la operación al gasto existente de esa categoría. Si no existe, se inicializa el gasto de esa categoría con el monto de la operación.
     if (operation.type === "gasto") {
@@ -363,7 +363,11 @@ const higherExpenseCategory = (operations) => {
   return { highestExpenseCategory, highestExpenseAmount };
 };
 
-
+/*Renderizar categoría con mayor gasto*/
+const renderHigherExpenseCategory = (getHigherExpenseCategory) => {
+  const { highestExpenseCategory, highestExpenseAmount } =
+    getHigherExpenseCategory();
+};
 
 const showReports = (operations) => {
   const allOperations = operations || getData("operations") || [];
@@ -454,13 +458,26 @@ const initializeApp = () => {
   });
 
   $("#btn-hamburguer-menu").addEventListener("click", () => {
-    showElement(["#nav-bar", "#btn-close-menu"]);
+    $("#menu-burguer").classList.remove("hidden");
+    showElement(["#menu-burguer", "#nav-bar", "#btn-close-menu"]);
     hideElement(["#btn-hamburguer-menu"]);
+    $([
+      "#main-view",
+      "category-view",
+      "#report-view",
+      "#new-oparation-view",
+    ]).classList.add("mt-20");
   });
 
   $("#btn-close-menu").addEventListener("click", () => {
     showElement(["#btn-hamburguer-menu"]);
     hideElement(["#nav-bar", "#btn-close-menu"]);
+    $([
+      "#main-view",
+      "category-view",
+      "#report-view",
+      "#new-oparation-view",
+    ]).classList.remove("mt-20");
   });
 
   $("#btn-confirm-edit-category").addEventListener("click", () => {
@@ -504,7 +521,7 @@ const initializeApp = () => {
   });
 
   $("#btn-report").addEventListener("click", () => {
-    hideElement(["#main-view"]);
+    hideElement(["#main-view", "#category-view"]);
     showElement(["#report-view"]);
   });
 };
