@@ -42,17 +42,17 @@ const renderOperations = (operations) => {
         operation.type === "ganancia" ? "text-green-400" : "text-red-400";
       const amountSign = operation.type === "ganancia" ? "+$" : "-$";
       $("#operation-table-body").innerHTML += `
-       <tr>
-         <td class="py-4 font-semibold">${operation.description}</td>
-         <td class="text-green-500 py-2"> <span>${categorySelected.categoryName}</span></td>
-         <td class="py-4">${operation.date}</td>
-         <td class="py-4  ${amountType} ">${amountSign} ${operation.amount}</td>
-         <td class="py-4">
-         <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showFormEdit('${operation.id}')"> <a><img  class="w-7 h-7" src="Images/icons-editar.png" alt="image"/> </a> </button>  
-         <button class="rounded-none bg-inherit" onclick="showDeleteModal('${operation.id}', '${operation.description}')"><a><img class="w-7 h-7" src="Images/icons-eliminar.png" alt="image" /></a></button>
-         </td>
-       </tr>  
-       `;
+        <tr class=" flex flex-wrap justify-between lg:flex-nowrap lg:items-center">
+          <td class=" w-1/2 text-base mt-4">${operation.description}</td>
+          <td class=" w-1/2 text-xs mt-4 text-right lg:text-center"> <span>${categorySelected.categoryName}</span></td>
+          <td class=" hidden lg:flex lg:w-1/2 lg:text-center justify-center">${operation.date}</td>
+          <td class=" w-1/2 text-base mt-4 lg:text-center font-bold ${amountType} ">${amountSign} ${operation.amount}</td>
+          <td class=" w-1/2 text-right lg:text-center">
+          <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showFormEdit('${operation.id}')"> <a><img  class="w-7 h-7" src="Images/icons-editar.png" alt="image"/> </a> </button>  
+          <button class="rounded-none bg-inherit" onclick="showDeleteModal('${operation.id}', '${operation.description}')"><a><img class="w-7 h-7" src="Images/icons-eliminar.png" alt="image" /></a></button>
+          </td>
+        </tr>  
+        `;
     }
   } else {
     showElement(["#without-operations"]);
@@ -280,6 +280,70 @@ const validateOperation = () => {
   return passesValidations;
 };
 
+/*Filters*/
+const filterOperations = (operations) => {
+  const typeFilter = $("#filter-type-select").value;
+  const categoryFilter = $("#filter-category").value
+  const dateFilter = $("#filter-date").value;
+  const orderFilter = $("#filter-order").value;
+
+  let filteredOperations = operations
+
+  if (typeFilter !== "Todos"){
+    filteredOperations = filteredOperations.filter ((operation) => {
+      return operation.type.toLowerCase() === typeFilter.toLowerCase()
+    })
+  }
+
+  if(categoryFilter !== "Todas") {
+    filteredOperations = filteredOperations.filter((operation) => {
+      const category = allCategories.find((cat) => cat.id === operation.category)
+      return category && category.id === categoryFilter
+    })
+  }
+
+  if (dateFilter){
+    filteredOperations = filteredOperations.filter ((operation) => new Date(operation.date)>= new Date (dateFilter)
+  )
+  }
+
+   switch (orderFilter) {
+     case "mas-reciente":
+       filteredOperations.sort((a, b) => new Date(b.date) - new Date(a.date));
+       break;
+     case "menos-reciente":
+       filteredOperations.sort((a, b) => new Date(a.date) - new Date(b.date));
+       break;
+     case "mayor-monto":
+       filteredOperations.sort((a, b) => b.amount - a.amount);
+       break;
+     case "menor-monto":
+       filteredOperations.sort((a, b) => a.amount - b.amount);
+       break;
+     case "a/z":
+       filteredOperations.sort((a, b) =>
+         a.description.localeCompare(b.description)
+       );
+       break;
+     case "z/a":
+       filteredOperations.sort((a, b) =>
+         b.description.localeCompare(a.description)
+       );
+       break;
+     default:
+       break;
+   }
+
+   if(filteredOperations.length) {
+    renderOperations(filterOperations)
+    
+   }else {
+    showElement(["#without-operations"]);
+    hideElement(["#width-operations"]);
+   }
+
+}
+
 /*REPORTES*/
 
 /*Categoría con mayor ganancia*/
@@ -443,7 +507,7 @@ const initializeApp = () => {
   });
 
   $("#btn-category").addEventListener("click", () => {
-    hideElement(["#main-view"]);
+    hideElement(["#main-view", "#report-view"]);
     showElement(["#category-view"]);
   });
 
