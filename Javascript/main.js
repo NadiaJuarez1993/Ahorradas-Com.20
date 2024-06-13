@@ -17,6 +17,22 @@ const hideElement = (selectors) => {
   }
 };
 
+//Fecha del dia en curso
+const getCurrentDate = () => {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() +1).padStart(2, "0")
+  const firstDay = "01"
+  return `${year}-${month}-${firstDay}`
+}
+
+//setea fecha en curso
+const setFilterDate =() => {
+  const currentDate = getCurrentDate()
+  $("#filter-date").value = currentDate;
+  $("#amount-input").value = currentDate;
+}
+
 //SETEA Y TRAE INFO DEL LOCAL STORAGE
 const getData = (key) => JSON.parse(localStorage.getItem(key));
 const setData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
@@ -295,11 +311,13 @@ const filterOperations = (operations) => {
     })
   }
 
-  if(categoryFilter !== "Todas") {
+  if (categoryFilter !== "Todas las categorias") {
     filteredOperations = filteredOperations.filter((operation) => {
-      const category = allCategories.find((cat) => cat.id === operation.category)
-      return category && category.id === categoryFilter
-    })
+      const category = allCategories.find(
+        (cat) => cat.id === operation.category
+      );
+      return category && category.id === categoryFilter;
+    });
   }
 
   if (dateFilter){
@@ -343,6 +361,9 @@ const filterOperations = (operations) => {
    }
 
 }
+
+//actualizacion de balance
+
 
 /*REPORTES*/
 
@@ -460,6 +481,11 @@ const initializeApp = () => {
   setData("categories", allCategories);
   renderCategoriesTable(allCategories);
   renderCategoryOptions(allCategories);
+
+  setFilterDate();
+  filterOperations(allOperations);
+
+  
 
   $("#new-operation-btn").addEventListener("click", () => {
     // cambio de pantalla para agregar nueva operacion
