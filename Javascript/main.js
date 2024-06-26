@@ -41,8 +41,10 @@ const setFilterDate = () => {
   $("#amount-input").value = currentDate;
 };
 
-//SETEA Y TRAE INFO DEL LOCAL STORAGE
+//TRAE INFO DEL LOCAL STORAGE
 const getData = (key) => JSON.parse(localStorage.getItem(key));
+
+//SETEAR INFO
 const setData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
 
 //INICIALIZACION DE NUESTROS USUARIOS
@@ -277,17 +279,17 @@ const deleteCategory = (categoryId) => {
 
 /*VALIDATIONS*/
 const validateOperation = () => {
-  // const regDescriptionNewOperation = new RegExp(`[/^\s*.*\S.*\s*$/]`);
+  // Obtiene el valor del input de descripción y elimina los espacios en blanco al inicio y al final
   const description = $("#description-input").value.trim(); //.trim() quita los espacios qeu puedadn haber en el iput, al principio y al final, no los del medio
-  const amount = $("#amount-input").valueAsNumber;
+  const amount = $("#amount-input").valueAsNumber; //Obtiene el valor numérico del input de cantidad
 
-  const amountRegex = /^-?\d+([.,]\d{1,2})?$/;
+  const amountRegex = /^-?\d+([.,]\d{1,2})?$/; //Expresión regular para validar la cantidad, permitiendo números negativos, decimales con punto o coma y hasta dos decimales
 
   if (description === "") {
-    showElement(["#invalid-description"]);
+    showElement(["#invalid-description"]); //// Muestra un mensaje de error
     $("#description-input").classList.add("border-red-500");
   } else {
-    hideElement(["#invalid-description"]);
+    hideElement(["#invalid-description"]); // Oculta el mensaje de error
     $("#description-input").classList.remove("border-red-500");
   }
 
@@ -370,8 +372,11 @@ const filterOperations = (operations) => {
   } else {
     showElement(["#without-operations"]);
     hideElement(["#width-operations"]);
+    updateBalance(filteredOperations)
   }
 };
+
+
 
 /*Balance*/
 
