@@ -19,19 +19,27 @@ const hideElement = (selectors) => {
 
 //Fecha del dia en curso
 const getCurrentDate = () => {
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = String(today.getMonth() +1).padStart(2, "0")
-  const firstDay = "01"
-  return `${year}-${month}-${firstDay}`
-}
+  //Se crea un nuevo objeto Date que representa la fecha y hora actuales.
+  const today = new Date();
+  //Se obtiene el año actual
+  const year = today.getFullYear();
+  // Se obtiene el mes actual. getMonth() devuelve un valor entre 0 y 11 (donde 0 es enero y 11 es diciembre),se suma 1 para obtener el número del mes correcto.  se convierte a string y se asegura que tenga 2 dígitos, con padStart(2, "0"). Esto añade un "0" al principio si el número del mes tiene solo un dígito.
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  // Se define el primer día del mes como "01".
+  const firstDay = "01";
+  //Se retorna la fecha en formato "YYYY-MM-DD", utilizando template literals.
+  return `${year}-${month}-${firstDay}`;
+};
 
 //setea fecha en curso
-const setFilterDate =() => {
-  const currentDate = getCurrentDate()
+const setFilterDate = () => {
+  // // Llama a la función getCurrentDate() para obtener la fecha actual en formato "YYYY-MM-DD".
+  const currentDate = getCurrentDate();
+  //selecciona el elemento con el id "filter-date" y establece su valor a la fecha actual.
   $("#filter-date").value = currentDate;
+  //selecciona el elemento con el id "amount-input" y establece su valor a la fecha actual.
   $("#amount-input").value = currentDate;
-}
+};
 
 //SETEA Y TRAE INFO DEL LOCAL STORAGE
 const getData = (key) => JSON.parse(localStorage.getItem(key));
@@ -299,18 +307,20 @@ const validateOperation = () => {
 /*Filters*/
 const filterOperations = (operations) => {
   const typeFilter = $("#filter-type-select").value;
-  const categoryFilter = $("#filter-category").value
+  const categoryFilter = $("#filter-category").value;
   const dateFilter = $("#filter-date").value;
   const orderFilter = $("#filter-order").value;
 
-  let filteredOperations = operations
+  let filteredOperations = operations;
+  //Si typeFilter no es "Todos", se filtran las operaciones que tengan el tipo coincidente con typeFilter
 
-  if (typeFilter !== "Todos"){
-    filteredOperations = filteredOperations.filter ((operation) => {
-      return operation.type.toLowerCase() === typeFilter.toLowerCase()
-    })
+  if (typeFilter !== "Todos") {
+    filteredOperations = filteredOperations.filter((operation) => {
+      return operation.type.toLowerCase() === typeFilter.toLowerCase();
+    });
   }
 
+  //Si categoryFilter no es "Todas las categorias", se filtran las operaciones basadas en la categoría seleccionada por el usuario
   if (categoryFilter !== "Todas las categorias") {
     filteredOperations = filteredOperations.filter((operation) => {
       const category = allCategories.find(
@@ -319,51 +329,95 @@ const filterOperations = (operations) => {
       return category && category.id === categoryFilter;
     });
   }
-
-  if (dateFilter){
-    filteredOperations = filteredOperations.filter ((operation) => new Date(operation.date)>= new Date (dateFilter)
-  )
+  //Si dateFilter tiene algún valor, se filtran las operaciones basadas en la fecha seleccionada por el usuario.
+  if (dateFilter) {
+    filteredOperations = filteredOperations.filter(
+      (operation) => new Date(operation.date) >= new Date(dateFilter)
+    );
   }
 
-   switch (orderFilter) {
-     case "mas-reciente":
-       filteredOperations.sort((a, b) => new Date(b.date) - new Date(a.date));
-       break;
-     case "menos-reciente":
-       filteredOperations.sort((a, b) => new Date(a.date) - new Date(b.date));
-       break;
-     case "mayor-monto":
-       filteredOperations.sort((a, b) => b.amount - a.amount);
-       break;
-     case "menor-monto":
-       filteredOperations.sort((a, b) => a.amount - b.amount);
-       break;
-     case "a/z":
-       filteredOperations.sort((a, b) =>
-         a.description.localeCompare(b.description)
-       );
-       break;
-     case "z/a":
-       filteredOperations.sort((a, b) =>
-         b.description.localeCompare(a.description)
-       );
-       break;
-     default:
-       break;
-   }
+  switch (orderFilter) {
+    case "mas-reciente":
+      filteredOperations.sort((a, b) => new Date(b.date) - new Date(a.date));
+      break;
+    case "menos-reciente":
+      filteredOperations.sort((a, b) => new Date(a.date) - new Date(b.date));
+      break;
+    case "mayor-monto":
+      filteredOperations.sort((a, b) => b.amount - a.amount);
+      break;
+    case "menor-monto":
+      filteredOperations.sort((a, b) => a.amount - b.amount);
+      break;
+    case "a/z":
+      filteredOperations.sort((a, b) =>
+        a.description.localeCompare(b.description)
+      );
+      break;
+    case "z/a":
+      filteredOperations.sort((a, b) =>
+        b.description.localeCompare(a.description)
+      );
+      break;
+    default:
+      break;
+  }
 
-   if(filteredOperations.length) {
-    renderOperations(filterOperations)
-    
-   }else {
+  //Renderizado y manejo de elementos visuales
+  //se está evaluando si el arreglo filteredOperations tiene algún elemento, es decir, si filteredOperations.length es mayor que 0
+  if (filteredOperations.length) {
+    renderOperations(filteredOperations);
+  } else {
     showElement(["#without-operations"]);
     hideElement(["#width-operations"]);
-   }
+  }
+};
 
-}
+/*Balance*/
 
 //actualizacion de balance
+const updateBalance = (operations) => {
+  //Si operations es falsy (como null o undefined), obtiene los datos de "operations" desde json.Si aún así no se obtiene nada, se inicializa allOperations como un array vacío []
+  const allOperations = operations || getData("operations") || [];
 
+  //Se inicializan totalProfit y totalSpent en 0 para almacenar el total de ganancias y gastos respectivamente.
+  let totalProfit = 0;
+  let totalSpent = 0;
+
+  // se recorre cada operación en allOperations. Si el tipo de operación (operation.type) es "Ganancia", se suma el monto (operation.amount) a totalProfit. Si es "Gasto", se suma el monto a totalSpent
+
+  for (const operation of allOperations) {
+    if (operation.type === "Ganancia") {
+      totalProfit += operation.amount;
+    } else if (operation.type === "Gasto") {
+      totalSpent += operation.amount;
+    }
+  }
+  const totalBalance = totalProfit - totalSpent;
+
+  //Se inicializa balanceColor como "text-black". Dependiendo del valor de totalBalance, se asigna un color diferente
+  let balanceColor = "text-black";
+  //Si totalBalance es mayor que 0, se asigna "text-green-400" (verde).
+  if (totalBalance > 0) {
+    balanceColor = "text-green-400";
+  }
+  //Si totalBalance es menor que 0, se asigna "text-red-400" (rojo).
+  else if (totalBalance < 0) {
+    balanceColor = "text-red-400";
+  }
+
+  // Se actualiza el elemento con el id #balance-total en el DOM. Primero se eliminan las clases  (text-black, text-green-400, text-red-400).  se añade la clase correspondiente según balanceColor, que determina el color del texto basado en el balance total calculado.
+  $("#balance-total").classList.remove(
+    "text-black",
+    "text-green-400",
+    "text-red-400"
+  );
+
+  // actualiza el texto dentro de los elementos con los ids #balance-profit y #balance-spent en el DOM. Se muestra el total de ganancias (totalProfit) y el total de gastos (totalSpent), formateados como dinero con dos decimales.
+  $("#balance-total").classList.add(balanceColor);
+  $("#balance-profit").innerText = `+$${totalProfit.toFixed(2)}`;
+  $("#balance-spent");
+};
 
 /*REPORTES*/
 
@@ -484,8 +538,6 @@ const initializeApp = () => {
 
   setFilterDate();
   filterOperations(allOperations);
-
-  
 
   $("#new-operation-btn").addEventListener("click", () => {
     // cambio de pantalla para agregar nueva operacion
