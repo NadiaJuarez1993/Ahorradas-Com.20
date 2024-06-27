@@ -382,16 +382,11 @@ const filterOperations = (operations) => {
 
 //actualizacion de balance
 const updateBalance = (operations) => {
-  //Si operations es falsy (como null o undefined), obtiene los datos de "operations" desde json.Si aún así no se obtiene nada, se inicializa allOperations como un array vacío []
-  const allOperations = operations || getData("operations") || [];
-
-  //Se inicializan totalProfit y totalSpent en 0 para almacenar el total de ganancias y gastos respectivamente.
+  const allOperations = operations || getData("operations") || []; //Si operations es falsy (como null o undefined), obtiene los datos de "operations" desde json.Si aún así no se obtiene nada, se inicializa allOperations como un array vacío []
   let totalProfit = 0;
-  let totalSpent = 0;
-
-  // se recorre cada operación en allOperations. Si el tipo de operación (operation.type) es "Ganancia", se suma el monto (operation.amount) a totalProfit. Si es "Gasto", se suma el monto a totalSpent
-
+  let totalSpent = 0; //Se inicializan totalProfit y totalSpent en 0 para almacenar el total de ganancias y gastos respectivamente.
   for (const operation of allOperations) {
+    // se recorre cada operación en allOperations. Si el tipo de operación (operation.type) es "Ganancia", se suma el monto (operation.amount) a totalProfit. Si es "Gasto", se suma el monto a totalSpent
     if (operation.type === "Ganancia") {
       totalProfit += operation.amount;
     } else if (operation.type === "Gasto") {
@@ -400,28 +395,32 @@ const updateBalance = (operations) => {
   }
   const totalBalance = totalProfit - totalSpent;
 
-  //Se inicializa balanceColor como "text-black". Dependiendo del valor de totalBalance, se asigna un color diferente
-  let balanceColor = "text-black";
-  //Si totalBalance es mayor que 0, se asigna "text-green-400" (verde).
+  let balanceColor = "text-black"; //Se inicializa balanceColor como "text-black". Dependiendo del valor de totalBalance, se asigna un color diferente
   if (totalBalance > 0) {
-    balanceColor = "text-green-400";
+    balanceColor = "text-green-400"; //Si totalBalance es mayor que 0, se asigna "text-green-400" (verde).
+  } else if (totalBalance < 0) {
+    balanceColor = "text-red-400"; //Si totalBalance es menor que 0, se asigna "text-red-400" (rojo).
   }
-  //Si totalBalance es menor que 0, se asigna "text-red-400" (rojo).
-  else if (totalBalance < 0) {
-    balanceColor = "text-red-400";
-  }
-
-  // Se actualiza el elemento con el id #balance-total en el DOM. Primero se eliminan las clases  (text-black, text-green-400, text-red-400).  se añade la clase correspondiente según balanceColor, que determina el color del texto basado en el balance total calculado.
   $("#balance-total").classList.remove(
     "text-black",
     "text-green-400",
     "text-red-400"
-  );
+  ); // Se actualiza el elemento con el id #balance-total en el DOM. Primero se eliminan las clases  (text-black, text-green-400, text-red-400).  se añade la clase correspondiente según balanceColor, que determina el color del texto basado en el balance total calculado.
 
-  // actualiza el texto dentro de los elementos con los ids #balance-profit y #balance-spent en el DOM. Se muestra el total de ganancias (totalProfit) y el total de gastos (totalSpent), formateados como dinero con dos decimales.
   $("#balance-total").classList.add(balanceColor);
-  $("#balance-profit").innerText = `+$${totalProfit.toFixed(2)}`;
-  $("#balance-spent");
+
+  $("#balance-profit").innerText = `+$${totalProfit.toFixed(2)}`; // Se actualiza el texto dentro de los elementos con los ids #balance-profit y #balance-spent en el DOM. Se muestra el total de ganancias (totalProfit) y el total de gastos (totalSpent), formateados como dinero con dos decimales.
+  $("#balance-spent").innerText = `-$${totalSpent.toFixed(2)}`;
+  $("#balance-total").innerText =
+    totalBalance >= 0
+      ? `+$${totalBalance.toFixed(2)}`
+      : `-$${Math.abs(totalBalance).toFixed(2)}`; // Se actualiza el texto dentro del elemento con id #balance-total en el DOM, mostrando el balance total formateado como dinero con dos decimales. Si el balance es negativo, se muestra con un signo negativo.
+  if (allOperations.length === 0){
+    $("#balance-profit").innerText = `+$0.00`;
+    $("balance-spent").innerText = `-$0.00`;
+    $("#balance-total").innerText = `$0.00`;
+
+  }
 };
 
 /*REPORTES*/
@@ -437,7 +436,6 @@ const highestProfitCategory = (operations) => {
   const profitByCategory = {};
   for (const operation of allOperations) {
     if (operation.type === "ganancia") {
-      const category = String(operation.category);
       if (profitByCategory[operation.category]) {
         profitByCategory[operation.category] += operation.amount;
       } else {
@@ -466,11 +464,12 @@ const highestProfitCategory = (operations) => {
 
 /*Renderizar categoría con mayor ganancia*/
 const renderHigherProfitCategory = (getHigherProfitCategory) => {
+  // Llama a la función getHigherProfitCategory y desestructura el objeto retornado para obtener highestProfitCategory y highestProfitAmount.
   const { highestProfitCategory, highestProfitAmount } =
     getHigherProfitCategory();
 
-  $("#higher-profit-category").innerText = highestProfitCategory || "N/A";
-  $("#higher-profit-amount").innerText = `+$${highestProfitAmount.toFixed(2)}`;
+  $("#higher-profit-category").innerText = highestProfitCategory || "N/A"; // Actualiza el contenido del elemento con id "higher-profit-category" en el DOM, mostrando la categoría con mayor ganancia.Si no hay una categoría con mayor ganancia, muestra "N/A".
+  $("#higher-profit-amount").innerText = `+$${highestProfitAmount.toFixed(2)}`; //Actualiza el contenido del elemento con id "higher-profit-amount" en el DOM, mostrando la cantidad de la mayor ganancia formateada como dinero con dos decimales.
 };
 
 /*Category with the highest spending*/
@@ -511,6 +510,10 @@ const higherExpenseCategory = (operations) => {
 const renderHigherExpenseCategory = (getHigherExpenseCategory) => {
   const { highestExpenseCategory, highestExpenseAmount } =
     getHigherExpenseCategory();
+    $("#higher-expenses-category").innerText = highestExpenseCategory;
+    $("higher-expenses-amount").innerText = `-$${highestExpenseAmount.toFixed(
+      2
+    )}`;
 };
 
 const showReports = (operations) => {
