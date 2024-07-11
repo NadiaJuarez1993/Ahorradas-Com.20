@@ -372,11 +372,9 @@ const filterOperations = (operations) => {
   } else {
     showElement(["#without-operations"]);
     hideElement(["#width-operations"]);
-    updateBalance(filteredOperations)
+    updateBalance(filteredOperations);
   }
 };
-
-
 
 /*Balance*/
 
@@ -415,11 +413,10 @@ const updateBalance = (operations) => {
     totalBalance >= 0
       ? `+$${totalBalance.toFixed(2)}`
       : `-$${Math.abs(totalBalance).toFixed(2)}`; // Se actualiza el texto dentro del elemento con id #balance-total en el DOM, mostrando el balance total formateado como dinero con dos decimales. Si el balance es negativo, se muestra con un signo negativo.
-  if (allOperations.length === 0){
+  if (allOperations.length === 0) {
     $("#balance-profit").innerText = `+$0.00`;
     $("balance-spent").innerText = `-$0.00`;
     $("#balance-total").innerText = `$0.00`;
-
   }
 };
 
@@ -508,12 +505,48 @@ const higherExpenseCategory = (operations) => {
 
 /*Renderizar categoría con mayor gasto*/
 const renderHigherExpenseCategory = (getHigherExpenseCategory) => {
+  // Llama a la función getHigherExpenseCategory y desestructura el objeto retornado para obtener highestExpenseCategory y highestExpenseAmount.
   const { highestExpenseCategory, highestExpenseAmount } =
     getHigherExpenseCategory();
-    $("#higher-expenses-category").innerText = highestExpenseCategory;
-    $("higher-expenses-amount").innerText = `-$${highestExpenseAmount.toFixed(
-      2
-    )}`;
+  $("#higher-expenses-category").innerText = highestExpenseCategory; // Actualiza el contenido del elemento con id "higher-expenses-category" en el DOM, mostrando la categoría con mayor gasto.
+  $("higher-expenses-amount").innerText = `-$${highestExpenseAmount.toFixed(
+    2
+  )}`; //Actualiza el contenido del elemento con id "higher-expenses-amount" en el DOM, mostrando la cantidad del mayor gasto formateada como dinero con dos decimales.
+};
+
+//Categoria con mayor balance
+const highestBalanceCategory = () => {
+  const allOperations = getData("opertaions") || []; //se obtienen todas las operaciones y categorías almacenadas. Si no hay datos, se inicializan como arrays vacíos.
+  const allCategories = getData("categories") || []; //se obtienen todas las operaciones y categorías almacenadas. Si no hay datos, se inicializan como arrays vacíos.
+  const balanceByCategory = {}; //Se crea un objeto vacío para almacenar los balances acumulados por categoría.
+
+  for (const operation of allOperations) {
+    const { category, amount, type } = operation; //Se recorre cada operación y se iteran sus propiedades category, amount y type.
+
+    if (type === "ganancia" || type === "gasto") {
+      if (balanceByCategory[category]) {
+        balanceByCategory[category] += type === "ganancia" ? amount : -amount; //Si la categoría  existe en balanceByCategory, se suma o resta el amount  si es una ganancia o un gasto.
+      } else {
+        balanceByCategory[category] = type === "ganancia" ? amount : -amount; //Si la categoría no existe, se inicia con el amount (positivo para ganancia, negativo para gasto).
+      }
+    }
+  }
+
+  let highestBalanceCategory = "";
+  let highestBalanceAmount = 0;
+
+  for (const categoryId in balanceByCategory) {
+    const categoryName = allCategories.find(
+      (category) => category.id === categoryId
+    )?.categoryName; //Se recorre el objeto balanceByCategory para encontrar la categoría con el balance más alto.
+
+    if (balanceByCategory[categoryId] > highestBalanceAmount) {
+      highestBalanceAmount = balanceByCategory[categoryId];
+      highestBalanceCategory = categoryName; //Si el balance de la categoría es mayor que highestBalanceAmount, se actualizan highestBalanceAmount y highestBalanceCategory.
+    }
+  }
+
+  return [highestBalanceCategory, highestBalanceAmount]; //se devuelve un array con el nombre de la categoría con el mayor balance y la cantidad del balance.
 };
 
 const showReports = (operations) => {
