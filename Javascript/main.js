@@ -557,6 +557,38 @@ const renderHigherBalanceCategory = (getHigherBalanceCategory) => {
   $("#higher-balance-amount").innerText = `$${higherBalanceAmount.toFixed(2)}`;
 };
 
+//Mes con mayor ganancia
+const higherProfitMonth = () => {
+  const allOperations = getData("operations") || []; //Se buscan todas las operaciones almacenadas. Si no hay datos, se inicializa como un array vacío.
+  const profitByMonth = {};
+
+  for (const operation of allOperations) {
+    if (operation.type === "ganancia") {
+      //Se recorre cada operación y se verifica si es de tipo "ganancia".
+      const operationDate = new Date(operation.date); //Se crea un objeto Date a partir de la fecha de la operación.
+      const monthYear = `$(operationDate.getMonth() + 1)} -${operationDate.getFullYear()}`; //Se obtiene el mes y el año de la operación en formato "mes-año".
+
+      if (profitByMonth[monthYear]) {
+        profitByMonth[monthYear] += operation.amount; //Si ya existe un registro para el mes-año en profitByMonth, se suma el monto de la operación.
+      } else {
+        profitByMonth[monthYear] = operation.amount;
+      }
+    }
+  }
+
+  let higherProfitMonth = "";
+  let higherProfitAmount = 0;
+
+  for (const monthYear in profitByMonth) {
+    const profitAmount = profitByMonth[monthYear];
+
+    if (profitAmount > higherProfitAmount) {
+      higherProfitAmount = profitAmount;
+      higherProfitMonth = monthYear;
+    } //Si la ganancia del mes actual es mayor que higherProfitAmount, se actualizan higherProfitAmount y higherProfitMonth.
+  }
+  return { higherProfitMonth, highestProfitAmount };
+}
 
 //Mostrar reporte
 const showReports = (operations) => {
