@@ -420,16 +420,16 @@ const updateBalance = (operations) => {
   }
 };
 
-/*REPORTES*/
+/*REPORT*/
 
-/*Categoría con mayor ganancia*/
-const highestProfitCategory = () => { //(operations)?
+/*Category with the highest profit*/
+const higherProfitCategory = () => { //(operations)?
   const allOperations = getData("operations") || [];
   //Se obtienen todas las operaciones y categorías almacenadas. Si no se encuentran datos, se inicializan como arreglos vacíos.
   const allCategories = getData("categories") || [];
-
   //Se recorren todas las operaciones para calcular las ganancias por categoría. Si la operación es de tipo "ganancia", se suma el monto a la categoría correspondiente.
   const profitByCategory = {};
+
   for (const operation of allOperations) {
     if (operation.type === "ganancia") {
       if (profitByCategory[operation.category]) {
@@ -443,6 +443,8 @@ const highestProfitCategory = () => { //(operations)?
   //Se recorren las ganancias por categoría para encontrar cuál tiene el monto más alto. Se busca el nombre de la categoría correspondiente usando su ID.
   let highestProfitCategory = "";
   let highestProfitAmount = 0;
+
+
   for (const categoryId in profitByCategory) {
     const categoryName = allCategories.find(
       (category) => String(category.id) === categoryId
@@ -458,7 +460,7 @@ const highestProfitCategory = () => { //(operations)?
   return { highestProfitCategory, highestProfitAmount };
 };
 
-/*Renderizar categoría con mayor ganancia*/
+/*Render category with higher profit*/
 const renderHigherProfitCategory = (getHigherProfitCategory) => {
   // Llama a la función getHigherProfitCategory y desestructura el objeto retornado para obtener highestProfitCategory y highestProfitAmount.
   const { highestProfitCategory, highestProfitAmount } =
@@ -469,53 +471,53 @@ const renderHigherProfitCategory = (getHigherProfitCategory) => {
 };
 
 /*Category with the highest spending*/
-const higherExpenseCategory = () => {
+const higherSpendingCategory = () => {
   //(operations)?
   const allOperations = getData("operations") || [];
   const allCategories = getData("categories") || [];
-  const expensesByCategory = {};
+  const spendingByCategory = {};
 
   for (const operation of allOperations) {
     //Si la operación es de tipo "gasto", se verifica si ya existe un gasto registrado para la categoría de la operación en expensesByCategory.
     //Si existe, se agrega el monto de la operación al gasto existente de esa categoría. Si no existe, se inicializa el gasto de esa categoría con el monto de la operación.
     if (operation.type === "gasto") {
-      if (expensesByCategory[operation.category]) {
-        expensesByCategory[operation.category] += operation.amount;
+      if (spendingByCategory[operation.category]) {
+        spendingByCategory[operation.category] += operation.amount;
       } else {
-        expensesByCategory[operation.category] = operation.amount;
+        spendingByCategory[operation.category] = operation.amount;
       }
     }
   }
 
-  let highestExpenseCategory = "";
-  let highestExpenseAmount = 0;
+  let highestSpendingCategory = "";
+  let highestSpendingAmount = 0;
 
-  for (const categoryId in expensesByCategory) {
+  for (const categoryId in spendingByCategory) {
     const categoryName = allCategories.find(
       (category) => category.id === categoryId
     )?.categoryName;
 
-    if (expensesByCategory[categoryId] > highestExpenseAmount) {
-      highestExpenseAmount = expensesByCategory[categoryId];
-      highestExpenseCategory = categoryName;
+    if (spendingByCategory[categoryId] > highestExpenseAmount) {
+      highestSpendingAmount = spendingByCategory[categoryId];
+      highestSpendingCategory = categoryName;
     }
   }
-  return { highestExpenseCategory, highestExpenseAmount };
+  return { highestSpendingCategory, highestSpendingAmount };
 };
 
 /*Renderizar categoría con mayor gasto*/
-const renderHigherExpenseCategory = (getHigherExpenseCategory) => {
+const renderHigherSpendingCategory = (getHigherSpendingCategory) => {
   // Llama a la función getHigherExpenseCategory y desestructura el objeto retornado para obtener highestExpenseCategory y highestExpenseAmount.
-  const { highestExpenseCategory, highestExpenseAmount } =
-    getHigherExpenseCategory();
-  $("#higher-expenses-category").innerText = highestExpenseCategory; // Actualiza el contenido del elemento con id "higher-expenses-category" en el DOM, mostrando la categoría con mayor gasto.
-  $("#higher-expenses-amount").innerText = `-$${highestExpenseAmount.toFixed(
+  const { highestSpendingCategory, highestSpendingAmount } =
+    getHigherSpendingCategory();
+  $("#higher-expenses-category").innerText = highestSpendingCategory; // Actualiza el contenido del elemento con id "higher-expenses-category" en el DOM, mostrando la categoría con mayor gasto.
+  $("#higher-expenses-amount").innerText = `-$${highestSpendingAmount.toFixed(
     2
   )}`; //Actualiza el contenido del elemento con id "higher-expenses-amount" en el DOM, mostrando la cantidad del mayor gasto formateada como dinero con dos decimales.
 };
 
-//Categoria con mayor balance
-const higherBalanceCategory = () => {
+/*Category with the higher balance*/
+const highestBalanceCategory = () => {
   const allOperations = getData("operations") || []; //se obtienen todas las operaciones y categorías almacenadas. Si no hay datos, se inicializan como arrays vacíos.
   const allCategories = getData("categories") || []; //se obtienen todas las operaciones y categorías almacenadas. Si no hay datos, se inicializan como arrays vacíos.
   const balanceByCategory = {}; //Se crea un objeto vacío para almacenar los balances acumulados por categoría.
@@ -532,32 +534,32 @@ const higherBalanceCategory = () => {
     }
   }
 
-  let higherBalanceCategory = "";
-  let higherBalanceAmount = 0;
+  let highestBalanceCategory = "";
+  let highestBalanceAmount = 0;
 
   for (const categoryId in balanceByCategory) {
     const categoryName = allCategories.find(
       (category) => category.id === categoryId
     )?.categoryName; //Se recorre el objeto balanceByCategory para encontrar la categoría con el balance más alto.
 
-    if (balanceByCategory[categoryId] > higherBalanceAmount) {
-      higherBalanceAmount = balanceByCategory[categoryId];
-      higherBalanceCategory = categoryName; //Si el balance de la categoría es mayor que  higherBalanceAmount, se actualizan  higherBalanceAmount y  higherBalanceCategory.
+    if (balanceByCategory[categoryId] > highestBalanceAmount) {
+      highestBalanceAmount = balanceByCategory[categoryId];
+      highestBalanceCategory = categoryName; //Si el balance de la categoría es mayor que  higherBalanceAmount, se actualizan  higherBalanceAmount y  higherBalanceCategory.
     }
   }
 
-  return [higherBalanceCategory, higherBalanceAmount]; //se devuelve un array con el nombre de la categoría con el mayor balance y la cantidad del balance.
+  return [highestBalanceCategory, highestBalanceAmount]; //se devuelve un array con el nombre de la categoría con el mayor balance y la cantidad del balance.
 };
 
-//Renderizar categoría con mayor balance.
-const renderHigherBalanceCategory = (getHigherBalanceCategory) => {
-   const { higherBalanceCategory, higherBalanceAmount }  =
+/*Render Highest Balance Category */ 
+const renderHighestBalanceCategory = (getHigherBalanceCategory) => {
+   const { highestBalanceCategory, highestBalanceAmount }  =
      getHigherBalanceCategory(); //devuelve un objeto con higherExpenseCategory (la categoría con mayor balance) higherBalanceAmount (el monto del balance).
-  $("#higher-balance-category").innerText = higherBalanceCategory || "N/A";
-  $("#higher-balance-amount").innerText = `$${higherBalanceAmount.toFixed(2)}`;
+  $("#higher-balance-category").innerText = highestBalanceCategory || "N/A";
+  $("#higher-balance-amount").innerText = `$${highestBalanceAmount.toFixed(2)}`;
 };
 
-//Mes con mayor ganancia
+/*Higher profit month */
 const higherProfitMonth = () => {
   const allOperations = getData("operations") || []; //Se buscan todas las operaciones almacenadas. Si no hay datos, se inicializa como un array vacío.
   const profitByMonth = {};
@@ -576,19 +578,49 @@ const higherProfitMonth = () => {
     }
   }
 
-  let higherProfitMonth = "";
-  let higherProfitAmount = 0;
+  let highestProfitMonth = "";
+  let highestProfitAmount = 0;
 
   for (const monthYear in profitByMonth) {
     const profitAmount = profitByMonth[monthYear];
 
-    if (profitAmount > higherProfitAmount) {
-      higherProfitAmount = profitAmount;
-      higherProfitMonth = monthYear;
+    if (profitAmount > highestProfitAmount) {
+      highestProfitAmount = profitAmount;
+      highestProfitMonth = monthYear;
     } //Si la ganancia del mes actual es mayor que higherProfitAmount, se actualizan higherProfitAmount y higherProfitMonth.
   }
-  return { higherProfitMonth, highestProfitAmount };
+  return { highestProfitMonth, highestProfitAmount };
 }
+
+/*Render higher profit month*/
+const renderHigherProfitMonth = (getHigherProfitMonth) => {
+  const { highestProfitMonth, highestProfitAmount } = getHigherProfitMonth(); // Se tienen el mes con mayor ganancia y el monto de la mayor ganancia llamando a getHigherProfitMonth
+
+  $("#higher-profit-month").innerText = highestProfitMonth || "N/A";
+  $(
+    "#higher-profit-month-amount"
+  ).innerText = ` +$${highestProfitAmount.toFixed(2)}`;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //Mostrar reporte
 const showReports = (operations) => {
