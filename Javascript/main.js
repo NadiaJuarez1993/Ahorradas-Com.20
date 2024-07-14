@@ -505,7 +505,7 @@ const higherSpendingCategory = () => {
   return { highestSpendingCategory, highestSpendingAmount };
 };
 
-/*Renderizar categoría con mayor gasto*/
+/*Render higher spending category*/
 const renderHigherSpendingCategory = (getHigherSpendingCategory) => {
   // Llama a la función getHigherExpenseCategory y desestructura el objeto retornado para obtener highestExpenseCategory y highestExpenseAmount.
   const { highestSpendingCategory, highestSpendingAmount } =
@@ -602,7 +602,37 @@ const renderHigherProfitMonth = (getHigherProfitMonth) => {
   ).innerText = ` +$${highestProfitAmount.toFixed(2)}`;
 }
 
+/*Higher spending month*/
+const higherSpendingMonth = () => {
+  const allOperations = getData("operations") || [];
+  const spendingByMonth = {}
 
+  for (const operation of allOperations){
+    if (operation.type === "gasto"){
+      const operationDate = new Date(operation.date)
+      const monthYear = `${operationDate.getFullYear()}`;
+
+      if(spendingByMonth[monthYear]){
+        spendingByMonth[monthYear] += operation.amount
+      }else{
+        spendingByMonth[monthYear] = operation.amount
+      }
+    }
+  }
+
+  let highestSpendingMonth = ""
+  let highestSpendingAmount =  0
+
+  for (const monthYear in spendingByMonth){
+    const spendingAmount = spendingByMonth[monthYear]
+
+    if(spendingAmount > highestSpendingAmount){
+      highestSpendingAmount = spendingAmount
+      highestSpendingMonth = monthYear
+    }
+  }
+  return{highestSpendingAmount, highestSpendingMonth}
+}
 
 
 
