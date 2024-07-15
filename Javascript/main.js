@@ -634,6 +634,14 @@ const higherSpendingMonth = () => {
   return{highestSpendingAmount, highestSpendingMonth}
 }
 
+/*Render highest spending month */
+const renderHigherSpendingMonth = (getHigherSpendingMonth) => {
+  const {highestSpendingAmount , highestSpendingMonth} = getHigherSpendingMonth()
+
+  $("#higher-expenses-month").innerText = highestSpendingMonth()
+  $("#higher-expenses-month-amount").innerText = `-$${highestSpendingAmount.toFixed(2)} `;
+}
+
 
 
 
