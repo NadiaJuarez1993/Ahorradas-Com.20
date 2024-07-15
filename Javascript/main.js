@@ -643,6 +643,47 @@ const renderHigherSpendingMonth = (getHigherSpendingMonth) => {
 }
 
 
+/*Totals by category*/
+const totalsByCategory =() => {
+  const allOperations = getData("operations") || []; //busca todas las operaciones
+  const allCategories = getData("categories") || [];// busca las categorias
+  const totalsByCategory = {}//objeto vacio para guardar totales
+
+  for (const operation of allOperations){  //itera
+    const {category, amount , type} = operation // busca datos
+
+    if(type === "ganancia" || type === "gasto"){ //si la categ. ya existe actualiza el tota;
+      if (totalsByCategory[category]){
+        totalsByCategory[category][type] += amount
+      }else{
+        totalsByCategory[category]= { // si no existe crea la entrada de esa categoria inicilaizando los totales de ganacia o gasto
+          ganancia: type === "ganancia" ? amount :0, 
+          gasto: type === "gasto" ? amount : 0
+        }
+      }
+    }
+  }
+
+  const renderedData = [] //almacena los resultados finales
+  for (const categoryId in totalsByCategory){
+    const categoryName = allCategories.find((category) => category.id === categoryId)?.categoryName //busca la categoria
+
+    const{ganancia , gasto} =totalsByCategory[categoryId]
+    const balance = ganancia - gasto //calcula balace
+
+    renderedData.push({
+      categoryName: categoryName || "N/A",
+      ganancia,
+      gasto,
+      balance,
+    });
+  } // actualiza todo
+
+  return renderedData
+} 
+
+ 
+
 
 
 
