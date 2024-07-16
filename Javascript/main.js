@@ -685,7 +685,7 @@ const totalsByCategory =() => {
  
 /*Render total by categories*/
 const renderTotalsByCategories = (getTotalsByCategories) =>{
-  const calculateTotalByCategory = getTotalsByCategories ()
+  const calculateTotalByCategory = getTotalsByCategories () //llama a get totalsbycategories para tener un array con los totales por categoria
 
   cleanContainer("#table-totals-categories");
 
@@ -704,20 +704,68 @@ const renderTotalsByCategories = (getTotalsByCategories) =>{
 }
 
 
+/*Totals by month */
+const totalsByMonth =() => {
+  const allOperations = getData("operations") || [];
+  const totalsByMonth ={}
 
+  for(const operation of allOperations){
+    const {amount, type, date} = operation
 
+    if(type === "ganancia"  || type === "gasto"){
+      const operationDate = new Date(date)
+      const monthYear = `${
+        operationDate.getMonth() + 1
+      }-${operationDate.getFullYear()}`
 
+      if (totalsByMonth[monthYear]){
+        totalsByMonth[monthYear] [type] += amount
+      }else{
+        totalsByMonth[monthYear] = {
+          ganancia : type === "ganancia" ? amount : 0,
+          gasto: type === "gasto" ? amount :0,
+        }
+      }
+    }
+  }
 
+  const totals = []
 
+  for (const monthYear in totalsByMonth){
+    const {ganancia , gasto} = totalsByMonth[monthYear]
+    const balance = ganancia - gasto
 
+    totals.push({
+      monthYear,
+      ganancia,
+      gasto,
+      balance,
+    })
+  }
+  return totals
+}
 
+/*Render totals by month */
+const renderTotalsByMonth = (getTotalsByMonth) => {
+  const totalsByMonth = getTotalsByMonth()
 
+  cleanContainer("#table-totals-month");
 
+  for (const data of totalsByMonth){
+    const {monthYear, ganancia, gasto, balance} = data
 
-
-
-
-
+    $("#table-totals-month").innerText += `
+    <tr class="">
+    <td>${monthYear}</td>
+    <td class="text-green-400">+$${ganancia}</td>
+    <td class="text-red-400">-$${gasto}</td>
+    <td>${
+     balance >= 0 ? `+$${balance}` : `-$${balance}`
+    }</td>
+    </tr>
+    `;
+  }
+}
 
 //Mostrar reporte
 const showReports = (operations) => {
