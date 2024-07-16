@@ -683,7 +683,25 @@ const totalsByCategory =() => {
 } 
 
  
+/*Render total by categories*/
+const renderTotalsByCategories = (getTotalsByCategories) =>{
+  const calculateTotalByCategory = getTotalsByCategories ()
 
+  cleanContainer("#table-totals-categories");
+
+  for (const data of calculateTotalByCategory){
+    const { categoryName, ganancia, gasto, balance} = data
+
+    $("#table-totals-categories").innerText += ` 
+    <tr class="">
+    <td class=""> ${categoryName}</td>
+    <td class="text-green-400"> +$${ganancia}</td>
+    <td class="text-red-400">-$${gasto}</td>
+    <td class=""> ${balance >= 0 ? `+$${balance}` : `-$${balance}`}</td>
+    </tr>
+    `;
+  }
+}
 
 
 
