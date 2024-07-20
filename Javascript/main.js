@@ -70,12 +70,24 @@ const renderOperations = (operations) => {
       $("#operation-table-body").innerHTML += `
         <tr class=" flex flex-wrap justify-between lg:flex-nowrap lg:items-center">
           <td class=" w-1/2 text-base mt-4">${operation.description}</td>
-          <td class=" w-1/2 text-xs mt-4 text-right lg:text-center"> <span>${categorySelected.categoryName}</span></td>
-          <td class=" hidden lg:flex lg:w-1/2 lg:text-center justify-center">${new Date(operation.date).toLocaleDateString("es-ES")}</td>
-          <td class=" w-1/2 text-base mt-4 lg:text-center font-bold ${amountType} ">${amountSign} ${operation.amount}</td>
+          <td class=" w-1/2 text-xs mt-4 text-right lg:text-center"> <span>${
+            categorySelected.categoryName
+          }</span></td>
+          <td class=" hidden lg:flex lg:w-1/2 lg:text-center justify-center">${new Date(
+            operation.date
+          ).toLocaleDateString("es-ES")}</td>
+          <td class=" w-1/2 text-base mt-4 lg:text-center font-bold ${amountType} ">${amountSign} ${
+        operation.amount
+      }</td>
           <td class=" w-1/2 text-right lg:text-center">
-          <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showFormEdit('${operation.id}')"> <a><img  class="w-7 h-7" src="Images/icons-editar.png" alt="image"/> </a> </button>  
-          <button class="rounded-none bg-inherit" onclick="showDeleteModal('${operation.id}', '${operation.description}')"><a><img class="w-7 h-7" src="Images/icons-eliminar.png" alt="image" /></a></button>
+          <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showFormEdit('${
+            operation.id
+          }')"> <a><img  class="w-7 h-7" src="Images/icons-editar.png" alt="image"/> </a> </button>  
+          <button class="rounded-none bg-inherit" onclick="showDeleteModal('${
+            operation.id
+          }', '${
+        operation.description
+      }')"><a><img class="w-7 h-7" src="Images/icons-eliminar.png" alt="image" /></a></button>
           </td>
         </tr>  
         `;
@@ -84,7 +96,7 @@ const renderOperations = (operations) => {
     showElement(["#without-operations"]);
     hideElement(["#width-operations"]);
   }
-  updateBalance()
+  updateBalance();
 };
 
 /*Add operation*/
@@ -92,7 +104,7 @@ const addOperation = () => {
   const currentData = getData("operations"); // pido la info
   currentData.push(saveOperationsInfo()); // modifico la info
   setData("operations", currentData); // mando la data
-  renderOperations(currentData); // aca aparece la tabla pintada pero undifine
+  // renderOperations(currentData); // aca aparece la tabla pintada pero undifine
 };
 
 /*Save operation*/
@@ -100,10 +112,10 @@ const saveOperationsInfo = (operationId) => {
   return {
     id: operationId ? operationId : randomId(), //tengo user id, entonces guardame ese id que paso por parametro y sino pasame un id nuevo
     description: $("#description-input").value,
-    amount: $("#amount-input").value,
-    type: $("#type-input").value,
     category: $("#category-input").value,
-    date: $("#date-input").value,
+    date: $("#date-input").valueAsDate,
+    amount: $("#amount-input").valueAsNumber,
+    type: $("#type-input").value,
   };
 };
 //en el boton de editar le paso el ID por parametro onclick="showFormEdit('${operation.id}')" a la funciom, el id lo recibo en la funcion const showFormEdit = (operationsId) y asi definimos parametro
@@ -194,26 +206,9 @@ const defaultCategories = [
 
 const allCategories = getData("categories") || defaultCategories;
 
-/*Render categories tables */
-const renderCategoriesTable = (categories) => {
-  cleanContainer("#table-category");
-  for (const category of categories) {
-    $("#table-category").innerHTML += `
-     <tr>          
-     <td class="text-green-500 w-3/6 my-5">${category.categoryName}
-     </td>
-        <td class="flex flex-row ">
-           <button class="rounded-none bg-inherit text-blue-600 hover:text-black mr-3 w-3/6 my-5 pl-11" onclick="showEditCategory('${category.id}')" ><a>Editar</a></button>
-            <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showDeleteCategoryModal('${category.id}', '${category.categoryName}')"><a>Eliminar</a></button>
-         </td>
-    </tr>
-   `;
-  }
-};
-
 /*Render the categories in the form */
 const renderCategoryOptions = (categories) => {
-  cleanContainer("#category-input");
+  //cleanContainer("#category-input");
   for (const category of categories) {
     $("#category-input").innerHTML += `
     <option value="${category.id}">${category.categoryName}</option>
@@ -221,6 +216,24 @@ const renderCategoryOptions = (categories) => {
     $("#filter-category").innerHTML += `
     <option value="${category.id}">${category.categoryName}</option>
     `;
+  }
+};
+
+/*Render categories tables */
+const renderCategoriesTable = (categories) => {
+  cleanContainer("#table-category");
+  const allCategories = getData("categories") || defaultCategories;
+  for (const category of allCategories) {
+    $("#table-category").innerHTML += `
+     <tr>          
+     <td class="text-green-500 w-3/6 my-5">${category.categoryName}
+     </td>
+        <td class="flex flex-row ">
+           <button class="rounded-none bg-inherit text-blue-600 hover:text-black mr-3 w-3/6 my-5 pl-11" onclick="showEditCategory('${category.id}')" ><a>Editar</a></button>
+           <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showDeleteCategoryModal('${category.id}', '${category.categoryName}')"><a>Eliminar</a></button>
+         </td>
+    </tr>
+   `;
   }
 };
 
@@ -232,7 +245,6 @@ const saveCategoryInfo = (categoryId) => {
   };
 };
 
-
 /*Add categorie */
 const addCategory = () => {
   const currentData = getData("categories");
@@ -241,7 +253,6 @@ const addCategory = () => {
   renderCategoryOptions(currentData);
   renderCategoriesTable(currentData);
 };
-
 
 /*Show edith category form */
 const showEditCategory = (categoryId) => {
@@ -253,7 +264,6 @@ const showEditCategory = (categoryId) => {
   );
   $("#category-input").value = categorySelected.categoryName;
 };
-
 
 /*Edith category */
 const editCategory = () => {
@@ -382,12 +392,12 @@ const filterOperations = (operations) => {
   //se está evaluando si el arreglo filteredOperations tiene algún elemento, es decir, si filteredOperations.length es mayor que 0
   if (filteredOperations.length) {
     renderOperations(filteredOperations);
+    updateBalance(filteredOperations);
   } else {
     showElement(["#without-operations"]);
     hideElement(["#width-operations"]);
-  
+    updateBalance(filteredOperations);
   }
-   updateBalance(filteredOperations);
 };
 
 /*Balance*/
@@ -398,9 +408,9 @@ const updateBalance = (operations) => {
   let totalSpent = 0; //Se inicializan totalProfit y totalSpent en 0 para almacenar el total de ganancias y gastos respectivamente.
   for (const operation of allOperations) {
     // se recorre cada operación en allOperations. Si el tipo de operación (operation.type) es "Ganancia", se suma el monto (operation.amount) a totalProfit. Si es "Gasto", se suma el monto a totalSpent
-    if (operation.type === "Ganancia") {
+    if (operation.type === "ganancia") {
       totalProfit += operation.amount;
-    } else if (operation.type === "Gasto") {
+    } else if (operation.type === "gasto") {
       totalSpent += operation.amount;
     }
   }
@@ -433,11 +443,11 @@ const updateBalance = (operations) => {
   }
 };
 
-
 /*REPORT*/
 
 /*Category with the highest profit*/
-const higherProfitCategory = () => { //(operations)?
+const higherProfitCategory = () => {
+  //(operations)?
   const allOperations = getData("operations") || [];
   //Se obtienen todas las operaciones y categorías almacenadas. Si no se encuentran datos, se inicializan como arreglos vacíos.
   const allCategories = getData("categories") || [];
@@ -457,7 +467,6 @@ const higherProfitCategory = () => { //(operations)?
   //Se recorren las ganancias por categoría para encontrar cuál tiene el monto más alto. Se busca el nombre de la categoría correspondiente usando su ID.
   let highestProfitCategory = "";
   let highestProfitAmount = 0;
-
 
   for (const categoryId in profitByCategory) {
     const categoryName = allCategories.find(
@@ -565,10 +574,10 @@ const highestBalanceCategory = () => {
   return [highestBalanceCategory, highestBalanceAmount]; //se devuelve un array con el nombre de la categoría con el mayor balance y la cantidad del balance.
 };
 
-/*Render Highest Balance Category */ 
+/*Render Highest Balance Category */
 const renderHighestBalanceCategory = (getHigherBalanceCategory) => {
-   const { highestBalanceCategory, highestBalanceAmount }  =
-     getHigherBalanceCategory(); //devuelve un objeto con higherExpenseCategory (la categoría con mayor balance) higherBalanceAmount (el monto del balance).
+  const { highestBalanceCategory, highestBalanceAmount } =
+    getHigherBalanceCategory(); //devuelve un objeto con higherExpenseCategory (la categoría con mayor balance) higherBalanceAmount (el monto del balance).
   $("#higher-balance-category").innerText = highestBalanceCategory || "N/A";
   $("#higher-balance-amount").innerText = `$${highestBalanceAmount.toFixed(2)}`;
 };
@@ -604,7 +613,7 @@ const higherProfitMonth = () => {
     } //Si la ganancia del mes actual es mayor que higherProfitAmount, se actualizan higherProfitAmount y higherProfitMonth.
   }
   return { highestProfitMonth, highestProfitAmount };
-}
+};
 
 /*Render higher profit month*/
 const renderHigherProfitMonth = (getHigherProfitMonth) => {
@@ -614,76 +623,83 @@ const renderHigherProfitMonth = (getHigherProfitMonth) => {
   $(
     "#higher-profit-month-amount"
   ).innerText = ` +$${highestProfitAmount.toFixed(2)}`;
-}
+};
 
 /*Higher spending month*/
 const higherSpendingMonth = () => {
   const allOperations = getData("operations") || [];
-  const spendingByMonth = {}
+  const spendingByMonth = {};
 
-  for (const operation of allOperations){
-    if (operation.type === "gasto"){
-      const operationDate = new Date(operation.date)
+  for (const operation of allOperations) {
+    if (operation.type === "gasto") {
+      const operationDate = new Date(operation.date);
       const monthYear = `${operationDate.getFullYear()}`;
 
-      if(spendingByMonth[monthYear]){
-        spendingByMonth[monthYear] += operation.amount
-      }else{
-        spendingByMonth[monthYear] = operation.amount
+      if (spendingByMonth[monthYear]) {
+        spendingByMonth[monthYear] += operation.amount;
+      } else {
+        spendingByMonth[monthYear] = operation.amount;
       }
     }
   }
 
-  let highestSpendingMonth = ""
-  let highestSpendingAmount =  0
+  let highestSpendingMonth = "";
+  let highestSpendingAmount = 0;
 
-  for (const monthYear in spendingByMonth){
-    const spendingAmount = spendingByMonth[monthYear]
+  for (const monthYear in spendingByMonth) {
+    const spendingAmount = spendingByMonth[monthYear];
 
-    if(spendingAmount > highestSpendingAmount){
-      highestSpendingAmount = spendingAmount
-      highestSpendingMonth = monthYear
+    if (spendingAmount > highestSpendingAmount) {
+      highestSpendingAmount = spendingAmount;
+      highestSpendingMonth = monthYear;
     }
   }
-  return{highestSpendingAmount, highestSpendingMonth}
-}
+  return { highestSpendingAmount, highestSpendingMonth };
+};
 
 /*Render highest spending month */
 const renderHigherSpendingMonth = (getHigherSpendingMonth) => {
-  const {highestSpendingAmount , highestSpendingMonth} = getHigherSpendingMonth()
+  const { highestSpendingAmount, highestSpendingMonth } =
+    getHigherSpendingMonth();
 
-  $("#higher-expenses-month").innerText = highestSpendingMonth()
-  $("#higher-expenses-month-amount").innerText = `-$${highestSpendingAmount.toFixed(2)} `;
-}
-
+  $("#higher-expenses-month").innerText = highestSpendingMonth();
+  $(
+    "#higher-expenses-month-amount"
+  ).innerText = `-$${highestSpendingAmount.toFixed(2)} `;
+};
 
 /*Totals by category*/
-const totalsByCategory =() => {
+const totalsByCategory = () => {
   const allOperations = getData("operations") || []; //busca todas las operaciones
-  const allCategories = getData("categories") || [];// busca las categorias
-  const totalsByCategory = {}//objeto vacio para guardar totales
+  const allCategories = getData("categories") || []; // busca las categorias
+  const totalsByCategory = {}; //objeto vacio para guardar totales
 
-  for (const operation of allOperations){  //itera
-    const {category, amount , type} = operation // busca datos
+  for (const operation of allOperations) {
+    //itera
+    const { category, amount, type } = operation; // busca datos
 
-    if(type === "ganancia" || type === "gasto"){ //si la categ. ya existe actualiza el tota;
-      if (totalsByCategory[category]){
-        totalsByCategory[category][type] += amount
-      }else{
-        totalsByCategory[category]= { // si no existe crea la entrada de esa categoria inicilaizando los totales de ganacia o gasto
-          ganancia: type === "ganancia" ? amount :0, 
-          gasto: type === "gasto" ? amount : 0
-        }
+    if (type === "ganancia" || type === "gasto") {
+      //si la categ. ya existe actualiza el tota;
+      if (totalsByCategory[category]) {
+        totalsByCategory[category][type] += amount;
+      } else {
+        totalsByCategory[category] = {
+          // si no existe crea la entrada de esa categoria inicilaizando los totales de ganacia o gasto
+          ganancia: type === "ganancia" ? amount : 0,
+          gasto: type === "gasto" ? amount : 0,
+        };
       }
     }
   }
 
-  const renderedData = [] //almacena los resultados finales
-  for (const categoryId in totalsByCategory){
-    const categoryName = allCategories.find((category) => category.id === categoryId)?.categoryName //busca la categoria
+  const renderedData = []; //almacena los resultados finales
+  for (const categoryId in totalsByCategory) {
+    const categoryName = allCategories.find(
+      (category) => category.id === categoryId
+    )?.categoryName; //busca la categoria
 
-    const{ganancia , gasto} =totalsByCategory[categoryId]
-    const balance = ganancia - gasto //calcula balace
+    const { ganancia, gasto } = totalsByCategory[categoryId];
+    const balance = ganancia - gasto; //calcula balace
 
     renderedData.push({
       categoryName: categoryName || "N/A",
@@ -693,18 +709,17 @@ const totalsByCategory =() => {
     });
   } // actualiza todo
 
-  return renderedData
-} 
+  return renderedData;
+};
 
- 
 /*Render total by categories*/
-const renderTotalsByCategories = (getTotalsByCategories) =>{
-  const calculateTotalByCategory = getTotalsByCategories () //llama a get totalsbycategories para tener un array con los totales por categoria
+const renderTotalsByCategories = (getTotalsByCategories) => {
+  const calculateTotalByCategory = getTotalsByCategories(); //llama a get totalsbycategories para tener un array con los totales por categoria
 
   cleanContainer("#table-totals-categories");
 
-  for (const data of calculateTotalByCategory){
-    const { categoryName, ganancia, gasto, balance} = data
+  for (const data of calculateTotalByCategory) {
+    const { categoryName, ganancia, gasto, balance } = data;
 
     $("#table-totals-categories").innerText += ` 
     <tr class="">
@@ -715,71 +730,68 @@ const renderTotalsByCategories = (getTotalsByCategories) =>{
     </tr>
     `;
   }
-}
-
+};
 
 /*Totals by month */
-const totalsByMonth =() => {
+const totalsByMonth = () => {
   const allOperations = getData("operations") || [];
-  const totalsByMonth ={}
+  const totalsByMonth = {};
 
-  for(const operation of allOperations){
-    const {amount, type, date} = operation
+  for (const operation of allOperations) {
+    const { amount, type, date } = operation;
 
-    if(type === "ganancia"  || type === "gasto"){
-      const operationDate = new Date(date)
+    if (type === "ganancia" || type === "gasto") {
+      const operationDate = new Date(date);
       const monthYear = `${
         operationDate.getMonth() + 1
-      }-${operationDate.getFullYear()}`
+      }-${operationDate.getFullYear()}`;
 
-      if (totalsByMonth[monthYear]){
-        totalsByMonth[monthYear] [type] += amount
-      }else{
+      if (totalsByMonth[monthYear]) {
+        totalsByMonth[monthYear][type] += amount;
+      } else {
         totalsByMonth[monthYear] = {
-          ganancia : type === "ganancia" ? amount : 0,
-          gasto: type === "gasto" ? amount :0,
-        }
+          ganancia: type === "ganancia" ? amount : 0,
+          gasto: type === "gasto" ? amount : 0,
+        };
       }
     }
   }
 
-  const totals = []
+  const totals = [];
 
-  for (const monthYear in totalsByMonth){
-    const {ganancia , gasto} = totalsByMonth[monthYear]
-    const balance = ganancia - gasto
+  for (const monthYear in totalsByMonth) {
+    const { ganancia, gasto } = totalsByMonth[monthYear];
+    const balance = ganancia - gasto;
 
     totals.push({
       monthYear,
       ganancia,
       gasto,
       balance,
-    })
+    });
   }
-  return totals
-}
+  return totals;
+};
 
 /*Render totals by month */
 const renderTotalsByMonth = (getTotalsByMonth) => {
-  const totalsByMonth = getTotalsByMonth()
+  const totalsByMonth = getTotalsByMonth();
 
   cleanContainer("#table-totals-month");
 
-  for (const data of totalsByMonth){
-    const {monthYear, ganancia, gasto, balance} = data
+  for (const data of totalsByMonth) {
+    const { monthYear, ganancia, gasto, balance } = data;
 
     $("#table-totals-month").innerText += `
     <tr class="">
     <td>${monthYear}</td>
     <td class="text-green-400">+$${ganancia}</td>
     <td class="text-red-400">-$${gasto}</td>
-    <td>${
-     balance >= 0 ? `+$${balance}` : `-$${balance}`
-    }</td>
+    <td>${balance >= 0 ? `+$${balance}` : `-$${balance}`}</td>
     </tr>
     `;
   }
-}
+};
 
 //Mostrar reporte
 const showReports = (operations) => {
@@ -801,145 +813,152 @@ const showReports = (operations) => {
   }
 };
 
-/*EVENTS*/
+/*Function initialize App */
 const initializeApp = () => {
   setData("operations", allOperations);
-  renderOperations(allOperations);
-
   setData("categories", allCategories);
-  renderCategoriesTable(allCategories);
-  renderCategoryOptions(allCategories);
-
   setFilterDate();
   filterOperations(allOperations);
+  renderCategoriesTable(allCategories);
+  updateBalance(allOperations);
+  showReports(allOperations);
+  renderHigherProfitCategory(higherProfitCategory);
+  renderHigherSpendingCategory(higherSpendingCategory);
+  renderHighestBalanceCategory(highestBalanceCategory);
+  renderHigherProfitMonth(higherProfitMonth);
+  renderHigherSpendingMonth(higherSpendingMonth);
+  renderTotalsByCategories(totalsByCategory);
+  renderTotalsByMonth(totalsByMonth);
+};
 
-  $("#new-operation-btn").addEventListener("click", () => {
-    // cambio de pantalla para agregar nueva operacion
-    showElement(["#new-oparation-form"]);
-    hideElement(["#main-view"]);
-  });
+/*EVENTS*/
 
-  $("#btn-add-operation").addEventListener("click", (e) => {
-    e.preventDefault(); // no recargar el form
-    if (validateOperation()) {
-      addOperation();
-      hideElement(["#new-oparation-form"]);
-      showElement(["#main-view"]);
-      $("#new-oparation-form").reset();
-    }
-  });
+$("#new-operation-btn").addEventListener("click", () => {
+  // cambio de pantalla para agregar nueva operacion
+  showElement(["#new-oparation-form"]);
+  hideElement(["#main-view"]);
+});
 
-  $("#btn-cancel-operation").addEventListener("click", () => {
+$("#btn-add-operation").addEventListener("click", (e) => {
+  e.preventDefault(); // no recargar el form
+  if (validateOperation()) {
+    addOperation();
     hideElement(["#new-oparation-form"]);
     showElement(["#main-view"]);
-  });
+    $("#new-oparation-form").reset();
+  }
+});
 
-  //BOTON EDITAR OPERACION EN FORMULARIO
-  $("#btn-edit-operation").addEventListener("click", (e) => {
-    e.preventDefault();
-    editOperation();
-    window.location.reload(); // RECARGAMOS LA PAGINA
-  });
+$("#btn-cancel-operation").addEventListener("click", () => {
+  hideElement(["#new-oparation-form"]);
+  showElement(["#main-view"]);
+});
 
-  $("#btn-confirm-edit-category").addEventListener("click", (e) => {
-    e.preventDefault();
-    editCategory();
-    window.location.reload(); // RECARGAMOS LA PAGINA
-  });
+//BOTON EDITAR OPERACION EN FORMULARIO
+$("#btn-edit-operation").addEventListener("click", (e) => {
+  e.preventDefault();
+  editOperation();
+  window.location.reload(); // RECARGAMOS LA PAGINA
+});
 
-  //boton de cerrar ventana modal
-  $("#btn-close-modal").addEventListener("click", () => {
-    hideElement(["#delete-modal"]);
-    showElement(["#main-view"]);
-  });
+$("#btn-confirm-edit-category").addEventListener("click", (e) => {
+  e.preventDefault();
+  editCategory();
+  window.location.reload(); // RECARGAMOS LA PAGINA
+});
 
-  $("#btn-cancel-modal").addEventListener("click", () => {
-    hideElement(["#delete-modal"]);
-    showElement(["#main-view"]);
-  });
+//boton de cerrar ventana modal
+$("#btn-close-modal").addEventListener("click", () => {
+  hideElement(["#delete-modal"]);
+  showElement(["#main-view"]);
+});
 
-  $("#btn-category").addEventListener("click", () => {
-    hideElement(["#main-view", "#report-view"]);
-    showElement(["#category-view"]);
-  });
+$("#btn-cancel-modal").addEventListener("click", () => {
+  hideElement(["#delete-modal"]);
+  showElement(["#main-view"]);
+});
 
-  $("#btn-add-category").addEventListener("click", (e) => {
-    addCategory();
-    $("#category-input").value = "";
-  });
+$("#btn-category").addEventListener("click", () => {
+  hideElement(["#main-view", "#report-view"]);
+  showElement(["#category-view"]);
+});
 
-  $("#btn-balance").addEventListener("click", () => {
-    showElement(["#main-view"]);
-    hideElement(["#category-view", "#new-oparation-form"]);
-  });
+$("#btn-add-category").addEventListener("click", (e) => {
+  addCategory();
+  $("#category-input").value = "";
+});
 
-  $("#btn-hamburguer-menu").addEventListener("click", () => {
-    $("#menu-burguer").classList.remove("hidden");
-    showElement(["#menu-burguer", "#nav-bar", "#btn-close-menu"]);
-    hideElement(["#btn-hamburguer-menu"]);
-    $([
-      "#main-view",
-      "category-view",
-      "#report-view",
-      "#new-oparation-view",
-    ]).classList.add("mt-20");
-  });
+$("#btn-balance").addEventListener("click", () => {
+  showElement(["#main-view"]);
+  hideElement(["#category-view", "#new-oparation-form"]);
+});
 
-  $("#btn-close-menu").addEventListener("click", () => {
-    showElement(["#btn-hamburguer-menu"]);
-    hideElement(["#nav-bar", "#btn-close-menu"]);
-    $([
-      "#main-view",
-      "category-view",
-      "#report-view",
-      "#new-oparation-view",
-    ]).classList.remove("mt-20");
-  });
+$("#btn-hamburguer-menu").addEventListener("click", () => {
+  $("#menu-burguer").classList.remove("hidden");
+  showElement(["#menu-burguer", "#nav-bar", "#btn-close-menu"]);
+  hideElement(["#btn-hamburguer-menu"]);
+  $([
+    "#main-view",
+    "category-view",
+    "#report-view",
+    "#new-oparation-view",
+  ]).classList.add("mt-20");
+});
 
-  $("#btn-confirm-edit-category").addEventListener("click", () => {
-    e.preventDefault();
-    editCategory();
-    window.location.reload();
-  });
+$("#btn-close-menu").addEventListener("click", () => {
+  showElement(["#btn-hamburguer-menu"]);
+  hideElement(["#nav-bar", "#btn-close-menu"]);
+  $([
+    "#main-view",
+    "category-view",
+    "#report-view",
+    "#new-oparation-view",
+  ]).classList.remove("mt-20");
+});
 
-  $("#btn-cancel-edit-category").addEventListener("click", () => {
-    showElement(["#category-view "]);
-    hideElement(["#edit-categoy"]);
-  });
+$("#btn-confirm-edit-category").addEventListener("click", () => {
+  e.preventDefault();
+  editCategory();
+  window.location.reload();
+});
 
-  $("#btn-cancel-delete-category-modal").addEventListener("click", () => {
-    showElement(["#category-view "]);
-    hideElement(["#delete-category-modal"]);
-  });
+$("#btn-cancel-edit-category").addEventListener("click", () => {
+  showElement(["#category-view "]);
+  hideElement(["#edit-categoy"]);
+});
 
-  $("#btn-close-delete-category-modal").addEventListener("click", () => {
-    showElement(["#category-view "]);
-    hideElement(["#delete-category-modal"]);
-  });
+$("#btn-cancel-delete-category-modal").addEventListener("click", () => {
+  showElement(["#category-view "]);
+  hideElement(["#delete-category-modal"]);
+});
 
-  $("#filter-hidden").addEventListener("click", () => {
-    hideElement(["#filter-form", "#filter-hidden"]);
-    showElement(["#filter-show"]);
-  });
+$("#btn-close-delete-category-modal").addEventListener("click", () => {
+  showElement(["#category-view "]);
+  hideElement(["#delete-category-modal"]);
+});
 
-  $("#filter-show").addEventListener("click", () => {
-    hideElement(["#filter-show"]);
-    showElement(["#filter-form", "#filter-hidden"]);
-  });
+$("#filter-hidden").addEventListener("click", () => {
+  hideElement(["#filter-form", "#filter-hidden"]);
+  showElement(["#filter-show"]);
+});
 
-  $("#filter-category").addEventListener("input", (e) => {
-    const categoryId = e.target.value;
-    const currentData = getData("operations");
-    const filterOperations = currentData.filter(
-      (operations) => operations.category === categoryId
-    );
-    renderOperations(filterOperations);
-  });
+$("#filter-show").addEventListener("click", () => {
+  hideElement(["#filter-show"]);
+  showElement(["#filter-form", "#filter-hidden"]);
+});
 
-  $("#btn-report").addEventListener("click", () => {
-    hideElement(["#main-view", "#category-view"]);
-    showElement(["#report-view"]);
-  });
-};
+$("#filter-category").addEventListener("input", (e) => {
+  const categoryId = e.target.value;
+  const currentData = getData("operations");
+  const filterOperations = currentData.filter(
+    (operations) => operations.category === categoryId
+  );
+  renderOperations(filterOperations);
+});
+
+$("#btn-report").addEventListener("click", () => {
+  hideElement(["#main-view", "#category-view"]);
+  showElement(["#report-view"]);
+});
 
 window.addEventListener("load", initializeApp);
