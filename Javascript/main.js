@@ -2,10 +2,10 @@
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => document.querySelectorAll(selector);
 
-//GENERA id DINAMICO EN CADA USO
+/*Generate dynamic ID in each use */
 const randomId = () => self.crypto.randomUUID();
 
-//FUNCION DE MOSTRAR Y OCULTAR ELEMENTOS DEL DOM
+/*Function to show and hide DOM element */
 const showElement = (selectors) => {
   for (const selector of selectors) {
     $(selector).classList.remove("hidden");
@@ -17,7 +17,7 @@ const hideElement = (selectors) => {
   }
 };
 
-//Fecha del dia en curso
+/*Date of the current day */
 const getCurrentDate = () => {
   //Se crea un nuevo objeto Date que representa la fecha y hora actuales.
   const today = new Date();
@@ -31,7 +31,7 @@ const getCurrentDate = () => {
   return `${year}-${month}-${firstDay}`;
 };
 
-//setea fecha en curso
+/*Set current date */
 const setFilterDate = () => {
   // // Llama a la función getCurrentDate() para obtener la fecha actual en formato "YYYY-MM-DD".
   const currentDate = getCurrentDate();
@@ -41,19 +41,19 @@ const setFilterDate = () => {
   $("#amount-input").value = currentDate;
 };
 
-//TRAE INFO DEL LOCAL STORAGE
+/* Bring information from the local storage*/
 const getData = (key) => JSON.parse(localStorage.getItem(key));
 
-//SETEAR INFO
+/*Setear info from local storage */
 const setData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
 
-//INICIALIZACION DE NUESTROS USUARIOS
-const allOperations = getData("operations") || []; //logica para pintar tabla: PEDIMOS INFO AL LOCAL STORAGE, SI TRAE INFO SE GUARDA EN VARIABLE ALL USERS Y SI NO SE CUMPLE SE GUARDA EN EL ARRAY VACIO
-
-//funcion de limpieza
+/*Cleaning function */
 const cleanContainer = (selector) => ($(selector).innerHTML = "");
 
-/*OPERACIONES*/
+/*OPERATIONS*/
+const allOperations = getData("operations") || []; //logica para pintar tabla: PEDIMOS INFO AL LOCAL STORAGE, SI TRAE INFO SE GUARDA EN VARIABLE ALL USERS Y SI NO SE CUMPLE SE GUARDA EN EL ARRAY VACIO
+
+/*Render operations on the table*/
 const renderOperations = (operations) => {
   cleanContainer("#operation-table-body");
   // funcion para tabla de operaciones
@@ -71,7 +71,7 @@ const renderOperations = (operations) => {
         <tr class=" flex flex-wrap justify-between lg:flex-nowrap lg:items-center">
           <td class=" w-1/2 text-base mt-4">${operation.description}</td>
           <td class=" w-1/2 text-xs mt-4 text-right lg:text-center"> <span>${categorySelected.categoryName}</span></td>
-          <td class=" hidden lg:flex lg:w-1/2 lg:text-center justify-center">${operation.date}</td>
+          <td class=" hidden lg:flex lg:w-1/2 lg:text-center justify-center">${new Date(operation.date).toLocaleDateString("es-ES")}</td>
           <td class=" w-1/2 text-base mt-4 lg:text-center font-bold ${amountType} ">${amountSign} ${operation.amount}</td>
           <td class=" w-1/2 text-right lg:text-center">
           <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showFormEdit('${operation.id}')"> <a><img  class="w-7 h-7" src="Images/icons-editar.png" alt="image"/> </a> </button>  
@@ -84,9 +84,10 @@ const renderOperations = (operations) => {
     showElement(["#without-operations"]);
     hideElement(["#width-operations"]);
   }
+  updateBalance()
 };
 
-//Agregar operaciones
+/*Add operation*/
 const addOperation = () => {
   const currentData = getData("operations"); // pido la info
   currentData.push(saveOperationsInfo()); // modifico la info
@@ -94,7 +95,7 @@ const addOperation = () => {
   renderOperations(currentData); // aca aparece la tabla pintada pero undifine
 };
 
-/*GUARDAR OPERACION*/
+/*Save operation*/
 const saveOperationsInfo = (operationId) => {
   return {
     id: operationId ? operationId : randomId(), //tengo user id, entonces guardame ese id que paso por parametro y sino pasame un id nuevo
@@ -107,6 +108,7 @@ const saveOperationsInfo = (operationId) => {
 };
 //en el boton de editar le paso el ID por parametro onclick="showFormEdit('${operation.id}')" a la funciom, el id lo recibo en la funcion const showFormEdit = (operationsId) y asi definimos parametro
 
+/*Show form edit operation */
 const showFormEdit = (operationId) => {
   //CAMBIO DE PANTALLA
   hideElement(["#main-view", "#btn-add-operation", "#new-opration-title"]);
@@ -128,7 +130,7 @@ const showFormEdit = (operationId) => {
   $("#date-input").value = operationSelected.date; //precargo el formulario con esa info
 };
 
-//editar operaciones
+/*Edit operation */
 const editOperation = () => {
   const operationId = $("#btn-edit-operation").getAttribute("data-id"); //TTOMAMOS EL ID DEL BOTON
   const currentData = getData("operations").map((operation) => {
@@ -140,7 +142,7 @@ const editOperation = () => {
   setData("operations", currentData);
 };
 
-//mostrar ventana modal
+/*Show delete operation modal */
 const showDeleteModal = (operationId, operationDescription) => {
   showElement(["#delete-modal"]);
   hideElement(["#main-view", "#btn-add-operation", "#new-opration-title"]);
@@ -152,7 +154,7 @@ const showDeleteModal = (operationId, operationDescription) => {
   });
 };
 
-//eliminar una operacion
+/*Delete operation */
 const deleteOperation = (operationId) => {
   const currentData = getData("operations").filter(
     (operation) => operation.id != operationId
@@ -161,8 +163,8 @@ const deleteOperation = (operationId) => {
   window.location.reload();
 };
 
-/*CATEGORIAS*/
-/*categorias preestablecidas*/
+/*CATEGORIES*/
+/*Default Categories*/
 const defaultCategories = [
   {
     id: randomId(), //genera id dinamico
@@ -192,6 +194,7 @@ const defaultCategories = [
 
 const allCategories = getData("categories") || defaultCategories;
 
+/*Render categories tables */
 const renderCategoriesTable = (categories) => {
   cleanContainer("#table-category");
   for (const category of categories) {
@@ -208,6 +211,7 @@ const renderCategoriesTable = (categories) => {
   }
 };
 
+/*Render the categories in the form */
 const renderCategoryOptions = (categories) => {
   cleanContainer("#category-input");
   for (const category of categories) {
@@ -220,6 +224,7 @@ const renderCategoryOptions = (categories) => {
   }
 };
 
+/*Save categoriy info */
 const saveCategoryInfo = (categoryId) => {
   return {
     id: categoryId ? categoryId : randomId(),
@@ -227,6 +232,8 @@ const saveCategoryInfo = (categoryId) => {
   };
 };
 
+
+/*Add categorie */
 const addCategory = () => {
   const currentData = getData("categories");
   currentData.push(saveCategoryInfo());
@@ -235,6 +242,8 @@ const addCategory = () => {
   renderCategoriesTable(currentData);
 };
 
+
+/*Show edith category form */
 const showEditCategory = (categoryId) => {
   showElement(["#edit-categoy"]);
   hideElement(["#category-view"]);
@@ -245,6 +254,8 @@ const showEditCategory = (categoryId) => {
   $("#category-input").value = categorySelected.categoryName;
 };
 
+
+/*Edith category */
 const editCategory = () => {
   const categoryId = $("#btn-confirm-edit-category").getAttribute("data-id");
   const currentData = getData("categories").map((category) => {
@@ -257,6 +268,7 @@ const editCategory = () => {
   renderCategoriesTable(currentData);
 };
 
+/*Show delete category modal */
 const showDeleteCategoryModal = (categoryId, CategoryDelete) => {
   showElement(["#delete-category-modal"]);
   hideElement(["#category-view"]);
@@ -269,6 +281,7 @@ const showDeleteCategoryModal = (categoryId, CategoryDelete) => {
   });
 };
 
+/*Delete category */
 const deleteCategory = (categoryId) => {
   const currentData = getData("categories").filter(
     (category) => category.id != categoryId
@@ -372,13 +385,13 @@ const filterOperations = (operations) => {
   } else {
     showElement(["#without-operations"]);
     hideElement(["#width-operations"]);
-    updateBalance(filteredOperations);
+  
   }
+   updateBalance(filteredOperations);
 };
 
 /*Balance*/
-
-//actualizacion de balance
+/*Update balance*/
 const updateBalance = (operations) => {
   const allOperations = operations || getData("operations") || []; //Si operations es falsy (como null o undefined), obtiene los datos de "operations" desde json.Si aún así no se obtiene nada, se inicializa allOperations como un array vacío []
   let totalProfit = 0;
@@ -419,6 +432,7 @@ const updateBalance = (operations) => {
     $("#balance-total").innerText = `$0.00`;
   }
 };
+
 
 /*REPORT*/
 
