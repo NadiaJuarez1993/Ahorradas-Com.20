@@ -343,6 +343,8 @@ const validateOperation = () => {
 };
 
 /*Filters*/
+
+
 const filterOperations = (operations) => {
   const typeFilter = $("#filter-type").value; //PROFE ALDANA ACA ME MARCA ERROR DE CONSOLA
   const categoryFilter = $("#filter-category").value;
@@ -701,7 +703,7 @@ const totalsByCategory = () => {
 
   for (const operation of allOperations) {
     //itera
-    const { amount, category, type } = operation; // busca datos
+    const { category, amount, type } = operation; // busca datos
 
     if (type === "ganancia" || type === "gasto") {
       //si la categ. ya existe actualiza el tota;
@@ -741,17 +743,19 @@ const totalsByCategory = () => {
 const renderTotalsByCategories = (getTotalsByCategories) => {
   const calculateTotalByCategory = getTotalsByCategories(); //llama a get totalsbycategories para tener un array con los totales por categoria
 
-  cleanContainer("#table-totals-categories");
+   cleanContainer("#table-totals-categories");
 
   for (const data of calculateTotalByCategory) {
     const { categoryName, ganancia, gasto, balance } = data;
 
-    $("#table-totals-categories").innerText += ` 
-    <tr class="">
-    <td class=""> ${categoryName}</td>
-    <td class="text-green-400"> +$${ganancia}</td>
-    <td class="text-red-400">-$${gasto}</td>
-    <td class=""> ${balance >= 0 ? `+$${balance}` : `-$${balance}`}</td>
+    $("#table-totals-categories").innerHTML += ` 
+    <tr class="flex justify-items-end">
+    <td class="w-1/4 mr-1 text-left"> ${categoryName}</td>
+    <td class="w-1/4 mr-1 text-green-500 text-center"> +$${ganancia}</td>
+    <td class="w-1/4 mr-1 text-red-500 text-center">-$${gasto}</td>
+    <td class="w-1/4 mr-1 text-center">${
+      balance >= 0 ? `+$${balance}` : `-$${balance}`
+    }</td>
     </tr>
     `;
   }
@@ -807,12 +811,14 @@ const renderTotalsByMonth = (getTotalsByMonth) => {
   for (const data of totalsByMonth) {
     const { monthYear, ganancia, gasto, balance } = data;
 
-    $("#table-totals-month").innerText += `
-    <tr class="">
-    <td>${monthYear}</td>
-    <td class="text-green-400">+$${ganancia}</td>
-    <td class="text-red-400">-$${gasto}</td>
-    <td>${balance >= 0 ? `+$${balance}` : `-$${balance}`}</td>
+    $("#table-totals-month").innerHTML += `
+    <tr class="flex justify-items-end">
+    <td class="w-1/4 mr-1 text-left">${monthYear}</td>
+    <td class="w-1/4 mr-1 text-green-500 text-center">+$${ganancia}</td>
+    <td class="text-red-400 w-1/4 mr-1 text-center">-$${gasto}</td>
+    <td class"w-1/4 mr-1 text-center">${
+      balance >= 0 ? `+$${balance}` : `-$${balance}`
+    }</td>
     </tr>
     `;
   }
