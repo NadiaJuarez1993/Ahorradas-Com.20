@@ -55,11 +55,14 @@ const allOperations = getData("operations") || []; //logica para pintar tabla: P
 
 /*Render operations on the table*/
 const renderOperations = (operations) => {
+  
   cleanContainer("#operation-table-body");
   // funcion para tabla de operaciones
-  if (operations.length) {
-    hideElement(["#without-operations"]);
-    showElement(["#width-operations"]);
+  hideElement(["#without-operations"]);
+  showElement(["#width-operations"]);
+  if (operations.length > 0) {
+    console.log(operations)
+    
     for (const operation of operations) {
       const categorySelected = getData("categories").find(
         (category) => category.id === operation.category
@@ -92,12 +95,15 @@ const renderOperations = (operations) => {
         </tr>  
         `;
     }
+
   } else {
     showElement(["#without-operations"]);
+    console.log("entro en el else")
     hideElement(["#width-operations"]);
   }
-  updateBalance();
+  
 };
+
 
 /*Add operation*/
 const addOperation = () => {
@@ -105,6 +111,7 @@ const addOperation = () => {
   currentData.push(saveOperationsInfo()); // modifico la info
   setData("operations", currentData); // mando la data
   // renderOperations(currentData); // aca aparece la tabla pintada pero undifine
+  renderOperations(getData("operations"))
 };
 
 /*Save operation*/
@@ -112,7 +119,7 @@ const saveOperationsInfo = (operationId) => {
   return {
     id: operationId ? operationId : randomId(), //tengo user id, entonces guardame ese id que paso por parametro y sino pasame un id nuevo
     description: $("#description-input").value,
-    category: $("#category-input").value,
+    category: $("#category-input-select").value,
     date: $("#date-input").valueAsDate,
     amount: $("#amount-input").valueAsNumber,
     type: $("#type-input").value,
@@ -138,7 +145,7 @@ const showFormEdit = (operationId) => {
   $("#description-input").value = operationSelected.description; //precargo el formulario con esa info
   $("#amount-input").valueAsNumber = operationSelected.amount; //precargo el formulario con esa info
   $("#type-input").value = operationSelected.type;
-  $("#category-input").value = operationSelected.category; //precargo el formulario con esa info
+  $("#category-input-select").value = operationSelected.category; //precargo el formulario con esa info
   $("#date-input").value = operationSelected.date; //precargo el formulario con esa info
 };
 
@@ -176,6 +183,8 @@ const deleteOperation = (operationId) => {
 };
 
 /*CATEGORIES*/
+
+
 /*Default Categories*/
 const defaultCategories = [
   {
@@ -206,11 +215,13 @@ const defaultCategories = [
 
 const allCategories = getData("categories") || defaultCategories;
 
+
 /*Render the categories in the form */
 const renderCategoryOptions = (categories) => {
-  //cleanContainer("#category-input");
+  console.log(categories)
+  cleanContainer("#category-input-select");
   for (const category of categories) {
-    $("#category-input").innerHTML += `
+    $("#category-input-select").innerHTML += `
     <option value="${category.id}">${category.categoryName}</option>
     `;
     $("#filter-category").innerHTML += `
@@ -220,7 +231,7 @@ const renderCategoryOptions = (categories) => {
 };
 
 /*Render categories tables */
-const renderCategoriesTable = (categories) => {
+const renderCategoriesTable = () => {
   cleanContainer("#table-category");
   const allCategories = getData("categories") || defaultCategories;
   for (const category of allCategories) {
@@ -229,8 +240,8 @@ const renderCategoriesTable = (categories) => {
      <td class="text-green-500 w-3/6 my-5">${category.categoryName}
      </td>
         <td class="flex flex-row ">
-           <button class="rounded-none bg-inherit text-blue-600 hover:text-black mr-3 w-3/6 my-5 pl-11" onclick="showEditCategory('${category.id}')" ><a>Editar</a></button>
-           <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showDeleteCategoryModal('${category.id}', '${category.categoryName}')"><a>Eliminar</a></button>
+           <button class="rounded-none bg-inherit text-blue-600 hover:text-black mr-3 w-3/6 my-5 pl-11" onclick="showEditCategory('${category.id}')" ><a><img  class="w-7 h-7" src="Images/icons-editar.png" alt="image"/> </a></button>
+           <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showDeleteCategoryModal('${category.id}', '${category.categoryName}')"><a><img class="w-7 h-7" src="Images/icons-eliminar.png" alt="image" /></a></button>
          </td>
     </tr>
    `;
@@ -239,9 +250,11 @@ const renderCategoriesTable = (categories) => {
 
 /*Save categoriy info */
 const saveCategoryInfo = (categoryId) => {
+  console.log($("#category-input-select").value);
   return {
     id: categoryId ? categoryId : randomId(),
-    categoryName: $("#category-input").value,
+    categoryName: $("#category-input-select").value,
+  
   };
 };
 
@@ -287,7 +300,7 @@ const showDeleteCategoryModal = (categoryId, CategoryDelete) => {
   $("#btn-delete-category").addEventListener("click", () => {
     const categoryId = $("#btn-delete-category").getAttribute("data-id");
     deleteCategory(categoryId);
-    window.location.reload();
+    window.location.reload(); //dijo aldana que hay que borrar esto
   });
 };
 
@@ -331,7 +344,7 @@ const validateOperation = () => {
 
 /*Filters*/
 const filterOperations = (operations) => {
-  const typeFilter = $("#filter-type-select").value;
+  const typeFilter = $("#filter-type").value; //PROFE ALDANA ACA ME MARCA ERROR DE CONSOLA
   const categoryFilter = $("#filter-category").value;
   const dateFilter = $("#filter-date").value;
   const orderFilter = $("#filter-order").value;
@@ -429,19 +442,24 @@ const updateBalance = (operations) => {
   ); // Se actualiza el elemento con el id #balance-total en el DOM. Primero se eliminan las clases  (text-black, text-green-400, text-red-400).  se añade la clase correspondiente según balanceColor, que determina el color del texto basado en el balance total calculado.
 
   $("#balance-total").classList.add(balanceColor);
-
-  $("#balance-profit").innerText = `+$${totalProfit.toFixed(2)}`; // Se actualiza el texto dentro de los elementos con los ids #balance-profit y #balance-spent en el DOM. Se muestra el total de ganancias (totalProfit) y el total de gastos (totalSpent), formateados como dinero con dos decimales.
-  $("#balance-spent").innerText = `-$${totalSpent.toFixed(2)}`;
+if(totalProfit >0 ) {
+  $("#balance-profit").innerText = `+$${totalProfit.toFixed(2)}`}; // Se actualiza el texto dentro de los elementos con los ids #balance-profit y #balance-spent en el DOM. Se muestra el total de ganancias (totalProfit) y el total de gastos (totalSpent), formateados como dinero con dos decimales.
+  if(totalSpent >0 ) {
+  $("#balance-spent").innerText = `-$${totalSpent.toFixed(2)}`;}
   $("#balance-total").innerText =
     totalBalance >= 0
       ? `+$${totalBalance.toFixed(2)}`
       : `-$${Math.abs(totalBalance).toFixed(2)}`; // Se actualiza el texto dentro del elemento con id #balance-total en el DOM, mostrando el balance total formateado como dinero con dos decimales. Si el balance es negativo, se muestra con un signo negativo.
   if (allOperations.length === 0) {
     $("#balance-profit").innerText = `+$0.00`;
-    $("balance-spent").innerText = `-$0.00`;
+    $("#balance-spent").innerText = `-$0.00`;
     $("#balance-total").innerText = `$0.00`;
   }
+  
+
+
 };
+
 
 /*REPORT*/
 
@@ -520,7 +538,7 @@ const higherSpendingCategory = () => {
       (category) => category.id === categoryId
     )?.categoryName;
 
-    if (spendingByCategory[categoryId] > highestExpenseAmount) {
+    if (spendingByCategory[categoryId] > highestSpendingAmount) {
       highestSpendingAmount = spendingByCategory[categoryId];
       highestSpendingCategory = categoryName;
     }
@@ -576,10 +594,13 @@ const highestBalanceCategory = () => {
 
 /*Render Highest Balance Category */
 const renderHighestBalanceCategory = (getHigherBalanceCategory) => {
-  const { highestBalanceCategory, highestBalanceAmount } =
+  const [ highestBalanceCategory, highestBalanceAmount ] =
     getHigherBalanceCategory(); //devuelve un objeto con higherExpenseCategory (la categoría con mayor balance) higherBalanceAmount (el monto del balance).
+   
+   
   $("#higher-balance-category").innerText = highestBalanceCategory || "N/A";
   $("#higher-balance-amount").innerText = `$${highestBalanceAmount.toFixed(2)}`;
+  
 };
 
 /*Higher profit month */
@@ -662,7 +683,7 @@ const renderHigherSpendingMonth = (getHigherSpendingMonth) => {
   const { highestSpendingAmount, highestSpendingMonth } =
     getHigherSpendingMonth();
 
-  $("#higher-expenses-month").innerText = highestSpendingMonth();
+  $("#higher-expenses-month").innerText = highestSpendingMonth;
   $(
     "#higher-expenses-month-amount"
   ).innerText = `-$${highestSpendingAmount.toFixed(2)} `;
@@ -815,11 +836,15 @@ const showReports = (operations) => {
 
 /*Function initialize App */
 const initializeApp = () => {
+  
   setData("operations", allOperations);
   setData("categories", allCategories);
   setFilterDate();
-  filterOperations(allOperations);
+  renderOperations(allOperations)
+   //PROFE ALDANA ESTA LINEA ME MARCA ERROR DE CONSOLA
   renderCategoriesTable(allCategories);
+  renderCategoryOptions(allCategories)
+  console.log()
   updateBalance(allOperations);
   showReports(allOperations);
   renderHigherProfitCategory(higherProfitCategory);
@@ -832,23 +857,25 @@ const initializeApp = () => {
 };
 
 /*EVENTS*/
-
+//Boton agregar nueva operacion
 $("#new-operation-btn").addEventListener("click", () => {
   // cambio de pantalla para agregar nueva operacion
   showElement(["#new-oparation-form"]);
   hideElement(["#main-view"]);
 });
 
+//boton agregar operacion
 $("#btn-add-operation").addEventListener("click", (e) => {
   e.preventDefault(); // no recargar el form
   if (validateOperation()) {
     addOperation();
     hideElement(["#new-oparation-form"]);
     showElement(["#main-view"]);
-    $("#new-oparation-form").reset();
+    // $("#new-oparation-form").reset();
   }
 });
 
+//boton cancelar nueva operacion operacion
 $("#btn-cancel-operation").addEventListener("click", () => {
   hideElement(["#new-oparation-form"]);
   showElement(["#main-view"]);
@@ -861,6 +888,7 @@ $("#btn-edit-operation").addEventListener("click", (e) => {
   window.location.reload(); // RECARGAMOS LA PAGINA
 });
 
+//boton confirmar editar operacion
 $("#btn-confirm-edit-category").addEventListener("click", (e) => {
   e.preventDefault();
   editCategory();
