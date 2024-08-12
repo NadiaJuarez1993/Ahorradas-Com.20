@@ -612,7 +612,9 @@ const higherProfitMonth = () => {
     if (operation.type === "ganancia") {
       //Se recorre cada operación y se verifica si es de tipo "ganancia".
       const operationDate = new Date(operation.date); //Se crea un objeto Date a partir de la fecha de la operación.
-      const monthYear = `$(operationDate.getMonth() + 1)} -${operationDate.getFullYear()}`; //Se obtiene el mes y el año de la operación en formato "mes-año".
+      const monthYear = `${(operationDate.getMonth() + 1)
+
+      } -${operationDate.getFullYear()}`; //Se obtiene el mes y el año de la operación en formato "mes-año".
 
       if (profitByMonth[monthYear]) {
         profitByMonth[monthYear] += operation.amount; //Si ya existe un registro para el mes-año en profitByMonth, se suma el monto de la operación.
@@ -654,7 +656,9 @@ const higherSpendingMonth = () => {
   for (const operation of allOperations) {
     if (operation.type === "gasto") {
       const operationDate = new Date(operation.date);
-      const monthYear = `${operationDate.getFullYear()}`;
+      const monthYear = `${
+        operationDate.getMonth() + 1
+      }-${operationDate.getFullYear()}`;
 
       if (spendingByMonth[monthYear]) {
         spendingByMonth[monthYear] += operation.amount;
@@ -697,7 +701,7 @@ const totalsByCategory = () => {
 
   for (const operation of allOperations) {
     //itera
-    const { category, amount, type } = operation; // busca datos
+    const { amount, category, type } = operation; // busca datos
 
     if (type === "ganancia" || type === "gasto") {
       //si la categ. ya existe actualiza el tota;
@@ -862,6 +866,7 @@ $("#new-operation-btn").addEventListener("click", () => {
   // cambio de pantalla para agregar nueva operacion
   showElement(["#new-oparation-form"]);
   hideElement(["#main-view"]);
+
 });
 
 //boton agregar operacion
