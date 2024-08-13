@@ -846,15 +846,12 @@ const showReports = (operations) => {
 
 /*Function initialize App */
 const initializeApp = () => {
-  
   setData("operations", allOperations);
   setData("categories", allCategories);
   setFilterDate();
   renderOperations(allOperations)
-   //PROFE ALDANA ESTA LINEA ME MARCA ERROR DE CONSOLA
   renderCategoriesTable(allCategories);
   renderCategoryOptions(allCategories)
-  console.log()
   updateBalance(allOperations);
   showReports(allOperations);
   renderHigherProfitCategory(higherProfitCategory);
@@ -869,10 +866,8 @@ const initializeApp = () => {
 /*EVENTS*/
 //Boton agregar nueva operacion
 $("#new-operation-btn").addEventListener("click", () => {
-  // cambio de pantalla para agregar nueva operacion
   showElement(["#new-oparation-form"]);
   hideElement(["#main-view"]);
-
 });
 
 //boton agregar operacion
@@ -882,7 +877,7 @@ $("#btn-add-operation").addEventListener("click", (e) => {
     addOperation();
     hideElement(["#new-oparation-form"]);
     showElement(["#main-view"]);
-    // $("#new-oparation-form").reset();
+    $("#new-oparation-form").reset();
   }
 });
 
@@ -985,6 +980,8 @@ $("#filter-show").addEventListener("click", () => {
   hideElement(["#filter-show"]);
   showElement(["#filter-form", "#filter-hidden"]);
 });
+
+
 
 $("#filter-category").addEventListener("input", (e) => {
   const categoryId = e.target.value;
