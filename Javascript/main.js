@@ -254,8 +254,7 @@ const renderCategoriesTable = () => {
 const saveCategoryInfo = (categoryId) => {
   return {
     id: categoryId ? categoryId : randomId(),
-    categoryName: $("#category-input-select").value,
-  
+    categoryName: $("#category-input").value,
   };
 };
 
