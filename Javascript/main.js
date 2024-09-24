@@ -50,43 +50,46 @@ const setData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
 /*Cleaning function */
 const cleanContainer = (selector) => ($(selector).innerHTML = "");
 
+
+
 /*OPERATIONS*/
+
 const allOperations = getData("operations") || []; //logica para pintar tabla: PEDIMOS INFO AL LOCAL STORAGE, SI TRAE INFO SE GUARDA EN VARIABLE ALL USERS Y SI NO SE CUMPLE SE GUARDA EN EL ARRAY VACIO
 
 /*Render operations on the table*/
 const renderOperations = (operations) => {
-  
+  $("#operation-table-body").innerHTML = ""; 
   cleanContainer("#operation-table-body");
-  // funcion para tabla de operaciones
+  
+  if (operations.length ) { 
+    // funcion para tabla de operaciones
   hideElement(["#without-operations"]);
   showElement(["#width-operations"]);
-  if (operations.length > 0) {
-    console.log(operations)
-    
-    for (const operation of operations) {
+  for (const operation of operations) {
       const categorySelected = getData("categories").find(
         (category) => category.id === operation.category
       );
-      const amountType =
-        operation.type === "ganancia" ? "text-green-400" : "text-red-400";
+
+      const amountType = operation.type === "ganancia" ? "text-green-400" : "text-red-400";
       const amountSign = operation.type === "ganancia" ? "+$" : "-$";
+
       $("#operation-table-body").innerHTML += `
         <tr class=" flex flex-wrap justify-between lg:flex-nowrap lg:items-center">
           <td class=" w-1/2 text-base mt-4">${operation.description}</td>
-          <td class=" w-1/2 text-xs mt-4 text-right lg:text-center"> <span>${
+          <td class=" w-1/2 text-xs mt-4 text-right lg:text-center"> <span class="my-1 rounded bg-green-100 mt-4">${
             categorySelected.categoryName
           }</span></td>
           <td class=" hidden lg:flex lg:w-1/2 lg:text-center justify-center">${new Date(
             operation.date
           ).toLocaleDateString("es-ES")}</td>
-          <td class=" w-1/2 text-base mt-4 lg:text-center font-bold ${amountType} ">${amountSign} ${
+          <td class="w-1/2 text-base mt-4 lg:text-center font-bold ${amountType}">${amountSign}${
         operation.amount
       }</td>
-          <td class=" w-1/2 text-right lg:text-center">
-          <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showFormEdit('${
+          <td class="w-1/2 text-right lg:text-center">
+          <button onclick="showFormEdit('${
             operation.id
-          }')"> <a><img  class="w-7 h-7" src="Images/icons-editar.png" alt="image"/> </a> </button>  
-          <button class="rounded-none bg-inherit" onclick="showDeleteModal('${
+          }')"><a><img  class="w-7 h-7" src="Images/icons-editar.png" alt="image"/></a></button>  
+          <button onclick="showDeleteModal('${
             operation.id
           }', '${
         operation.description
@@ -98,10 +101,9 @@ const renderOperations = (operations) => {
 
   } else {
     showElement(["#without-operations"]);
-    console.log("entro en el else")
     hideElement(["#width-operations"]);
   }
-  
+  updateBalance() 
 };
 
 
@@ -182,8 +184,8 @@ const deleteOperation = (operationId) => {
   window.location.reload();
 };
 
-/*CATEGORIES*/
 
+/*CATEGORIES*/
 
 /*Default Categories*/
 const defaultCategories = [
@@ -342,11 +344,10 @@ const validateOperation = () => {
   return passesValidations;
 };
 
-/*Filters*/
 
-
+/*FILTERS*/
 const filterOperations = (operations) => {
-  const typeFilter = $("#filter-type").value; //PROFE ALDANA ACA ME MARCA ERROR DE CONSOLA
+  const typeFilter = $("#filter-type").value; 
   const categoryFilter = $("#filter-category").value;
   const dateFilter = $("#filter-date").value;
   const orderFilter = $("#filter-order").value;
