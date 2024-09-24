@@ -50,27 +50,26 @@ const setData = (key, data) => localStorage.setItem(key, JSON.stringify(data));
 /*Cleaning function */
 const cleanContainer = (selector) => ($(selector).innerHTML = "");
 
-
-
 /*OPERATIONS*/
 
 const allOperations = getData("operations") || []; //logica para pintar tabla: PEDIMOS INFO AL LOCAL STORAGE, SI TRAE INFO SE GUARDA EN VARIABLE ALL USERS Y SI NO SE CUMPLE SE GUARDA EN EL ARRAY VACIO
 
 /*Render operations on the table*/
 const renderOperations = (operations) => {
-  $("#operation-table-body").innerHTML = ""; 
+  $("#operation-table-body").innerHTML = "";
   cleanContainer("#operation-table-body");
-  
-  if (operations.length ) { 
+
+  if (operations.length) {
     // funcion para tabla de operaciones
-  hideElement(["#without-operations"]);
-  showElement(["#width-operations"]);
-  for (const operation of operations) {
+    hideElement(["#without-operations"]);
+    showElement(["#width-operations"]);
+    for (const operation of operations) {
       const categorySelected = getData("categories").find(
         (category) => category.id === operation.category
       );
 
-      const amountType = operation.type === "ganancia" ? "text-green-400" : "text-red-400";
+      const amountType =
+        operation.type === "ganancia" ? "text-green-400" : "text-red-400";
       const amountSign = operation.type === "ganancia" ? "+$" : "-$";
 
       $("#operation-table-body").innerHTML += `
@@ -89,23 +88,19 @@ const renderOperations = (operations) => {
           <button onclick="showFormEdit('${
             operation.id
           }')"><a><img  class="w-7 h-7" src="Images/icons-editar.png" alt="image"/></a></button>  
-          <button onclick="showDeleteModal('${
-            operation.id
-          }', '${
+          <button onclick="showDeleteModal('${operation.id}', '${
         operation.description
       }')"><a><img class="w-7 h-7" src="Images/icons-eliminar.png" alt="image" /></a></button>
           </td>
         </tr>  
         `;
     }
-
   } else {
     showElement(["#without-operations"]);
     hideElement(["#width-operations"]);
   }
-  updateBalance() 
+  updateBalance();
 };
-
 
 /*Add operation*/
 const addOperation = () => {
@@ -113,7 +108,7 @@ const addOperation = () => {
   currentData.push(saveOperationsInfo()); // modifico la info
   setData("operations", currentData); // mando la data
   // renderOperations(currentData); // aca aparece la tabla pintada pero undifine
-  renderOperations(getData("operations"))
+  renderOperations(getData("operations"));
 };
 
 /*Save operation*/
@@ -184,7 +179,6 @@ const deleteOperation = (operationId) => {
   window.location.reload();
 };
 
-
 /*CATEGORIES*/
 
 /*Default Categories*/
@@ -217,11 +211,8 @@ const defaultCategories = [
 
 const allCategories = getData("categories") || defaultCategories;
 
-
 /*Render the categories in the form */
 const renderCategoryOptions = (categories) => {
-  console.log(categories)
-  cleanContainer("#category-input-select");
   for (const category of categories) {
     $("#category-input-select").innerHTML += `
     <option value="${category.id}">${category.categoryName}</option>
@@ -233,17 +224,17 @@ const renderCategoryOptions = (categories) => {
 };
 
 /*Render categories tables */
-const renderCategoriesTable = () => {
+const renderCategoriesTable = (categories) => {
   cleanContainer("#table-category");
   const allCategories = getData("categories") || defaultCategories;
   for (const category of allCategories) {
     $("#table-category").innerHTML += `
-     <tr>          
-     <td class="text-green-500 w-3/6 my-5">${category.categoryName}
+     <tr class="flex flex-wrap justify-between lg:flex-nowrap lg:items-center>          
+     <td class="w-1/2 text-base mt-4">${category.categoryName}
      </td>
-        <td class="flex flex-row ">
-           <button class="rounded-none bg-inherit text-blue-600 hover:text-black mr-3 w-3/6 my-5 pl-11" onclick="showEditCategory('${category.id}')" ><a><img  class="w-7 h-7" src="Images/icons-editar.png" alt="image"/> </a></button>
-           <button class="rounded-none bg-inherit text-blue-600 hover:text-black" onclick="showDeleteCategoryModal('${category.id}', '${category.categoryName}')"><a><img class="w-7 h-7" src="Images/icons-eliminar.png" alt="image" /></a></button>
+        <td class="w-1/2 text-right lg:text-right">
+           <button onclick="showEditCategory('${category.id}')" ><a><img class="w-7 h-7" src="Images/icons-editar.png" alt="image"/></a></button>
+           <button onclick="showDeleteCategoryModal('${category.id}', '${category.categoryName}')"><a><img class="w-7 h-7" src="Images/icons-eliminar.png" alt="image"/></a></button>
          </td>
     </tr>
    `;
@@ -283,7 +274,10 @@ const editCategory = () => {
   const categoryId = $("#btn-confirm-edit-category").getAttribute("data-id");
   const currentData = getData("categories").map((category) => {
     if (category.id === categoryId) {
-      return saveCategoryInfo(categoryId);
+      return {
+        id:categoryId,
+        categoryName: $("#category-input").value,
+      }
     }
     return category;
   });
@@ -300,17 +294,19 @@ const showDeleteCategoryModal = (categoryId, CategoryDelete) => {
   $("#btn-delete-category").addEventListener("click", () => {
     const categoryId = $("#btn-delete-category").getAttribute("data-id");
     deleteCategory(categoryId);
-    window.location.reload(); //dijo aldana que hay que borrar esto
   });
 };
 
 /*Delete category */
 const deleteCategory = (categoryId) => {
-  const currentData = getData("categories").filter(
-    (category) => category.id != categoryId
+const allCategories = getData("categories") || defaultCategories;
+
+const currentCategories = allCategories.filter(
+    (category) => category.id !== categoryId
   );
-  setData("categories", currentData);
-  window.location.reload();
+
+  setData("operations", currentData);
+  renderCategoriesTable(currentCategories)
 };
 
 /*VALIDATIONS*/
@@ -342,10 +338,9 @@ const validateOperation = () => {
   return passesValidations;
 };
 
-
 /*FILTERS*/
 const filterOperations = (operations) => {
-  const typeFilter = $("#filter-type").value; 
+  const typeFilter = $("#filter-type").value;
   const categoryFilter = $("#filter-category").value;
   const dateFilter = $("#filter-date").value;
   const orderFilter = $("#filter-order").value;
@@ -420,7 +415,7 @@ const updateBalance = (operations) => {
   const allOperations = operations || getData("operations") || []; //Si operations es falsy (como null o undefined), obtiene los datos de "operations" desde json.Si aún así no se obtiene nada, se inicializa allOperations como un array vacío []
   let totalProfit = 0;
   let totalSpent = 0; //Se inicializan totalProfit y totalSpent en 0 para almacenar el total de ganancias y gastos respectivamente.
- 
+
   for (const operation of allOperations) {
     // se recorre cada operación en allOperations. Si el tipo de operación (operation.type) es "Ganancia", se suma el monto (operation.amount) a totalProfit. Si es "Gasto", se suma el monto a totalSpent
     if (operation.type === "ganancia") {
@@ -431,15 +426,14 @@ const updateBalance = (operations) => {
   }
   const totalBalance = totalProfit - totalSpent;
 
-  
-let balanceColor = "text-black"; //Se inicializa balanceColor como "text-black". Dependiendo del valor de totalBalance, se asigna un color diferente
+  let balanceColor = "text-black"; //Se inicializa balanceColor como "text-black". Dependiendo del valor de totalBalance, se asigna un color diferente
 
-if (totalBalance > 0) {
+  if (totalBalance > 0) {
     balanceColor = "text-green-400"; //Si totalBalance es mayor que 0, se asigna "text-green-400" (verde).
   } else if (totalBalance < 0) {
     balanceColor = "text-red-400"; //Si totalBalance es menor que 0, se asigna "text-red-400" (rojo).
   }
-  
+
   $("#balance-total").classList.remove(
     "text-black",
     "text-green-400",
@@ -452,15 +446,14 @@ if (totalBalance > 0) {
   $("#balance-total").innerText =
     totalBalance >= 0
       ? `+$${totalBalance.toFixed(2)}`
-      : `-$${Math.abs(totalBalance).toFixed(2)}`; 
-      // Se actualiza el texto dentro del elemento con id #balance-total en el DOM, mostrando el balance total formateado como dinero con dos decimales. Si el balance es negativo, se muestra con un signo negativo.
+      : `-$${Math.abs(totalBalance).toFixed(2)}`;
+  // Se actualiza el texto dentro del elemento con id #balance-total en el DOM, mostrando el balance total formateado como dinero con dos decimales. Si el balance es negativo, se muestra con un signo negativo.
   if (allOperations.length === 0) {
     $("#balance-profit").innerText = `+$0.00`;
     $("#balance-spent").innerText = `-$0.00`;
     $("#balance-total").innerText = `$0.00`;
   }
 };
-
 
 /*REPORT*/
 
@@ -595,13 +588,11 @@ const highestBalanceCategory = () => {
 
 /*Render Highest Balance Category */
 const renderHighestBalanceCategory = (getHigherBalanceCategory) => {
-  const [ highestBalanceCategory, highestBalanceAmount ] =
+  const [highestBalanceCategory, highestBalanceAmount] =
     getHigherBalanceCategory(); //devuelve un objeto con higherExpenseCategory (la categoría con mayor balance) higherBalanceAmount (el monto del balance).
-   
-   
+
   $("#higher-balance-category").innerText = highestBalanceCategory || "N/A";
   $("#higher-balance-amount").innerText = `$${highestBalanceAmount.toFixed(2)}`;
-  
 };
 
 /*Higher profit month */
@@ -613,8 +604,8 @@ const higherProfitMonth = () => {
     if (operation.type === "ganancia") {
       //Se recorre cada operación y se verifica si es de tipo "ganancia".
       const operationDate = new Date(operation.date); //Se crea un objeto Date a partir de la fecha de la operación.
-      const monthYear = `${(operationDate.getMonth() + 1)
-
+      const monthYear = `${
+        operationDate.getMonth() + 1
       } -${operationDate.getFullYear()}`; //Se obtiene el mes y el año de la operación en formato "mes-año".
 
       if (profitByMonth[monthYear]) {
@@ -742,7 +733,7 @@ const totalsByCategory = () => {
 const renderTotalsByCategories = (getTotalsByCategories) => {
   const calculateTotalByCategory = getTotalsByCategories(); //llama a get totalsbycategories para tener un array con los totales por categoria
 
-   cleanContainer("#table-totals-categories");
+  cleanContainer("#table-totals-categories");
 
   for (const data of calculateTotalByCategory) {
     const { categoryName, ganancia, gasto, balance } = data;
@@ -848,9 +839,9 @@ const initializeApp = () => {
   setData("operations", allOperations);
   setData("categories", allCategories);
   setFilterDate();
-  renderOperations(allOperations)
+  renderOperations(allOperations);
   renderCategoriesTable(allCategories);
-  renderCategoryOptions(allCategories)
+  renderCategoryOptions(allCategories);
   updateBalance(allOperations);
   showReports(allOperations);
   renderHigherProfitCategory(higherProfitCategory);
@@ -979,8 +970,6 @@ $("#filter-show").addEventListener("click", () => {
   hideElement(["#filter-show"]);
   showElement(["#filter-form", "#filter-hidden"]);
 });
-
-
 
 $("#filter-category").addEventListener("input", (e) => {
   const categoryId = e.target.value;
