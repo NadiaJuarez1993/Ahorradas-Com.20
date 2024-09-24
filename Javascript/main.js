@@ -252,7 +252,6 @@ const renderCategoriesTable = () => {
 
 /*Save categoriy info */
 const saveCategoryInfo = (categoryId) => {
-  console.log($("#category-input-select").value);
   return {
     id: categoryId ? categoryId : randomId(),
     categoryName: $("#category-input-select").value,
@@ -422,6 +421,7 @@ const updateBalance = (operations) => {
   const allOperations = operations || getData("operations") || []; //Si operations es falsy (como null o undefined), obtiene los datos de "operations" desde json.Si aún así no se obtiene nada, se inicializa allOperations como un array vacío []
   let totalProfit = 0;
   let totalSpent = 0; //Se inicializan totalProfit y totalSpent en 0 para almacenar el total de ganancias y gastos respectivamente.
+ 
   for (const operation of allOperations) {
     // se recorre cada operación en allOperations. Si el tipo de operación (operation.type) es "Ganancia", se suma el monto (operation.amount) a totalProfit. Si es "Gasto", se suma el monto a totalSpent
     if (operation.type === "ganancia") {
@@ -432,35 +432,34 @@ const updateBalance = (operations) => {
   }
   const totalBalance = totalProfit - totalSpent;
 
-  let balanceColor = "text-black"; //Se inicializa balanceColor como "text-black". Dependiendo del valor de totalBalance, se asigna un color diferente
-  if (totalBalance > 0) {
+  
+let balanceColor = "text-black"; //Se inicializa balanceColor como "text-black". Dependiendo del valor de totalBalance, se asigna un color diferente
+
+if (totalBalance > 0) {
     balanceColor = "text-green-400"; //Si totalBalance es mayor que 0, se asigna "text-green-400" (verde).
   } else if (totalBalance < 0) {
     balanceColor = "text-red-400"; //Si totalBalance es menor que 0, se asigna "text-red-400" (rojo).
   }
+  
   $("#balance-total").classList.remove(
     "text-black",
     "text-green-400",
     "text-red-400"
   ); // Se actualiza el elemento con el id #balance-total en el DOM. Primero se eliminan las clases  (text-black, text-green-400, text-red-400).  se añade la clase correspondiente según balanceColor, que determina el color del texto basado en el balance total calculado.
-
   $("#balance-total").classList.add(balanceColor);
-if(totalProfit >0 ) {
-  $("#balance-profit").innerText = `+$${totalProfit.toFixed(2)}`}; // Se actualiza el texto dentro de los elementos con los ids #balance-profit y #balance-spent en el DOM. Se muestra el total de ganancias (totalProfit) y el total de gastos (totalSpent), formateados como dinero con dos decimales.
-  if(totalSpent >0 ) {
-  $("#balance-spent").innerText = `-$${totalSpent.toFixed(2)}`;}
+
+  $("#balance-profit").innerText = `+$${totalProfit.toFixed(2)}`;
+  $("#balance-spent").innerText = `-$${totalSpent.toFixed(2)}`;
   $("#balance-total").innerText =
     totalBalance >= 0
       ? `+$${totalBalance.toFixed(2)}`
-      : `-$${Math.abs(totalBalance).toFixed(2)}`; // Se actualiza el texto dentro del elemento con id #balance-total en el DOM, mostrando el balance total formateado como dinero con dos decimales. Si el balance es negativo, se muestra con un signo negativo.
+      : `-$${Math.abs(totalBalance).toFixed(2)}`; 
+      // Se actualiza el texto dentro del elemento con id #balance-total en el DOM, mostrando el balance total formateado como dinero con dos decimales. Si el balance es negativo, se muestra con un signo negativo.
   if (allOperations.length === 0) {
     $("#balance-profit").innerText = `+$0.00`;
     $("#balance-spent").innerText = `-$0.00`;
     $("#balance-total").innerText = `$0.00`;
   }
-  
-
-
 };
 
 
