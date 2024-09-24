@@ -482,7 +482,7 @@ const higherProfitCategory = () => {
 
   for (const categoryId in profitByCategory) {
     const categoryName = allCategories.find(
-      (category) => String(category.id) === categoryId
+      (category) => category.id === categoryId
     )?.categoryName;
 
     if (profitByCategory[categoryId] > highestProfitAmount) {
@@ -587,9 +587,9 @@ const highestBalanceCategory = () => {
 };
 
 /*Render Highest Balance Category */
-const renderHighestBalanceCategory = (getHigherBalanceCategory) => {
-  const [highestBalanceCategory, highestBalanceAmount] =
-    getHigherBalanceCategory(); //devuelve un objeto con higherExpenseCategory (la categoría con mayor balance) higherBalanceAmount (el monto del balance).
+const renderHighestBalanceCategory = (getHighestBalanceCategory) => {
+  const {highestBalanceCategory, highestBalanceAmount} =
+    getHighestBalanceCategory(); //devuelve un objeto con higherExpenseCategory (la categoría con mayor balance) higherBalanceAmount (el monto del balance).
 
   $("#higher-balance-category").innerText = highestBalanceCategory || "N/A";
   $("#higher-balance-amount").innerText = `$${highestBalanceAmount.toFixed(2)}`;
@@ -635,9 +635,7 @@ const renderHigherProfitMonth = (getHigherProfitMonth) => {
   const { highestProfitMonth, highestProfitAmount } = getHigherProfitMonth(); // Se tienen el mes con mayor ganancia y el monto de la mayor ganancia llamando a getHigherProfitMonth
 
   $("#higher-profit-month").innerText = highestProfitMonth || "N/A";
-  $(
-    "#higher-profit-month-amount"
-  ).innerText = ` +$${highestProfitAmount.toFixed(2)}`;
+  $("#higher-profit-month-amount").innerText = `+$${highestProfitAmount.toFixed(2)}`;
 };
 
 /*Higher spending month*/
@@ -715,7 +713,7 @@ const totalsByCategory = () => {
       (category) => category.id === categoryId
     )?.categoryName; //busca la categoria
 
-    const { ganancia, gasto } = totalsByCategory[categoryId];
+    const {ganancia, gasto} = totalsByCategory[categoryId];
     const balance = ganancia - gasto; //calcula balace
 
     renderedData.push({
@@ -779,7 +777,7 @@ const totalsByMonth = () => {
   const totals = [];
 
   for (const monthYear in totalsByMonth) {
-    const { ganancia, gasto } = totalsByMonth[monthYear];
+    const {ganancia, gasto} = totalsByMonth[monthYear];
     const balance = ganancia - gasto;
 
     totals.push({
@@ -799,7 +797,7 @@ const renderTotalsByMonth = (getTotalsByMonth) => {
   cleanContainer("#table-totals-month");
 
   for (const data of totalsByMonth) {
-    const { monthYear, ganancia, gasto, balance } = data;
+    const {monthYear, ganancia, gasto, balance} = data;
 
     $("#table-totals-month").innerHTML += `
     <tr class="flex justify-items-end">
@@ -818,14 +816,14 @@ const renderTotalsByMonth = (getTotalsByMonth) => {
 const showReports = (operations) => {
   const allOperations = operations || getData("operations") || [];
 
-  const earnings = allOperations.filter(
+  const profits = allOperations.filter(
     (operation) => operation.type === "ganancia"
   );
-  const expenses = allOperations.filter(
+  const spending = allOperations.filter(
     (operation) => operation.type === "gasto"
   );
 
-  if (earnings.length >= 1 && expenses.length >= 1) {
+  if (profits.length >= 1 && spending.length >= 1) {
     showElement(["#reports-results"]);
     hideElement(["#without-operations-report"]);
   } else {
@@ -839,6 +837,7 @@ const initializeApp = () => {
   setData("operations", allOperations);
   setData("categories", allCategories);
   setFilterDate();
+  filterOperations(allOperations)
   renderOperations(allOperations);
   renderCategoriesTable(allCategories);
   renderCategoryOptions(allCategories);
