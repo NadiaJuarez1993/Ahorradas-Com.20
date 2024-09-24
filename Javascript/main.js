@@ -37,8 +37,8 @@ const setFilterDate = () => {
   const currentDate = getCurrentDate();
   //selecciona el elemento con el id "filter-date" y establece su valor a la fecha actual.
   $("#filter-date").value = currentDate;
-  //selecciona el elemento con el id "amount-input" y establece su valor a la fecha actual.
-  $("#amount-input").value = currentDate;
+  //selecciona el elemento con el id "date-input" y establece su valor a la fecha actual.
+  $("#date-input").value = currentDate;
 };
 
 /* Bring information from the local storage*/
