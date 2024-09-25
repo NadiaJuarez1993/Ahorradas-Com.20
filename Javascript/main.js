@@ -587,17 +587,12 @@ const highestBalanceCategory = () => {
 };
 
 /*Render Highest Balance Category */
- const renderHighestBalanceCategory = (getHighestBalanceCategory) => {
-   const {highestBalanceCategory,highestBalanceAmount} =
-     getHighestBalanceCategory(); //devuelve un objeto con higherExpenseCategory (la categoría con mayor balance) higherBalanceAmount (el monto del balance).
-   
-     console.log(getHighestBalanceCategory())
-
-   $("#higher-balance-category").innerText = highestBalanceCategory || "N/A";
+const renderHighestBalanceCategory = (getHighestBalanceCategory) => {
+  const { highestBalanceCategory, highestBalanceAmount } =
+    getHighestBalanceCategory(); //devuelve un objeto con higherExpenseCategory (la categoría con mayor balance) higherBalanceAmount (el monto del balance).
+  $("#higher-balance-category").innerText = highestBalanceCategory || "N/A";
   $("#higher-balance-amount").innerText = `$${highestBalanceAmount.toFixed(2)}`;
 };
-
-
 
 /*Higher profit month */
 const higherProfitMonth = () => {
@@ -850,7 +845,7 @@ const initializeApp = () => {
   showReports(allOperations);
   renderHigherProfitCategory(higherProfitCategory);
   renderHigherSpendingCategory(higherSpendingCategory);
- // renderHighestBalanceCategory(highestBalanceCategory); //Este me marca error
+  // renderHighestBalanceCategory(highestBalanceCategory); //Este me marca error
   renderHigherProfitMonth(higherProfitMonth);
   renderHigherSpendingMonth(higherSpendingMonth);
   renderTotalsByCategories(totalsByCategory);
@@ -884,10 +879,8 @@ $("#btn-add-operation").addEventListener("click", (e) => {
     addOperation();
     $("#form-new-operation").reset();
   }
-  showElement(["#main-view"])
-  hideElement(["#new-oparation-form"]
-
-  )
+  showElement(["#main-view"]);
+  hideElement(["#new-oparation-form"]);
 });
 
 //boton cancelar nueva operacion operacion
@@ -907,9 +900,8 @@ $("#btn-edit-operation").addEventListener("click", (e) => {
 $("#btn-confirm-edit-category").addEventListener("click", (e) => {
   e.preventDefault();
   editCategory();
-  showElement(["#category-view"])
-  hideElement(["#edit-categoy"])
-  ; // RECARGAMOS LA PAGINA
+  showElement(["#category-view"]);
+  hideElement(["#edit-categoy"]); // RECARGAMOS LA PAGINA
 });
 
 //boton de cerrar ventana modal
@@ -926,7 +918,7 @@ $("#btn-cancel-modal").addEventListener("click", () => {
 //CATEGORIAS
 //mostrar seccion categorias
 $("#btn-category").addEventListener("click", () => {
-  hideElement(["#main-view", "#report-view","#new-oparation-form" ]);
+  hideElement(["#main-view", "#report-view", "#new-oparation-form"]);
   showElement(["#category-view"]);
 });
 
