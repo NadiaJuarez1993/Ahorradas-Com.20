@@ -142,7 +142,7 @@ const showFormEdit = (operationId) => {
   $("#description-input").value = operationSelected.description; //precargo el formulario con esa info
   $("#amount-input").valueAsNumber = operationSelected.amount; //precargo el formulario con esa info
   $("#type-input").value = operationSelected.type;
-  $("#category-input-select").value = operationSelected.category; //precargo el formulario con esa info
+  $("#category-edit-input").value = operationSelected.category; //precargo el formulario con esa info
   $("#date-input").value = operationSelected.date; //precargo el formulario con esa info
 };
 
@@ -245,7 +245,7 @@ const renderCategoriesTable = (categories) => {
 const saveCategoryInfo = (categoryId) => {
   return {
     id: categoryId ? categoryId : randomId(),
-    categoryName: $("#category-input").value,
+    categoryName: $("#category-edit-input").value,
   };
 };
 
@@ -266,7 +266,7 @@ const showEditCategory = (categoryId) => {
   const categorySelected = getData("categories").find(
     (category) => category.id === categoryId
   );
-  $("#category-input").value = categorySelected.categoryName;
+  $("#category-edit-input").value = categorySelected.categoryName;
 };
 
 /*Edith category */
@@ -275,9 +275,9 @@ const editCategory = () => {
   const currentData = getData("categories").map((category) => {
     if (category.id === categoryId) {
       return {
-        id:categoryId,
-        categoryName: $("#category-input").value,
-      }
+        id: categoryId,
+        categoryName: $("#category-edit-input").value,
+      };
     }
     return category;
   });
@@ -299,14 +299,14 @@ const showDeleteCategoryModal = (categoryId, CategoryDelete) => {
 
 /*Delete category */
 const deleteCategory = (categoryId) => {
-const allCategories = getData("categories") || defaultCategories;
+  const allCategories = getData("categories") || defaultCategories;
 
-const currentCategories = allCategories.filter(
+  const currentCategories = allCategories.filter(
     (category) => category.id !== categoryId
   );
 
   setData("operations", currentData);
-  renderCategoriesTable(currentCategories)
+  renderCategoriesTable(currentCategories);
 };
 
 /*VALIDATIONS*/
@@ -588,7 +588,7 @@ const highestBalanceCategory = () => {
 
 /*Render Highest Balance Category */
 const renderHighestBalanceCategory = (getHighestBalanceCategory) => {
-  const {highestBalanceCategory, highestBalanceAmount} =
+  const { highestBalanceCategory, highestBalanceAmount } =
     getHighestBalanceCategory(); //devuelve un objeto con higherExpenseCategory (la categoría con mayor balance) higherBalanceAmount (el monto del balance).
 
   $("#higher-balance-category").innerText = highestBalanceCategory || "N/A";
@@ -635,7 +635,9 @@ const renderHigherProfitMonth = (getHigherProfitMonth) => {
   const { highestProfitMonth, highestProfitAmount } = getHigherProfitMonth(); // Se tienen el mes con mayor ganancia y el monto de la mayor ganancia llamando a getHigherProfitMonth
 
   $("#higher-profit-month").innerText = highestProfitMonth || "N/A";
-  $("#higher-profit-month-amount").innerText = `+$${highestProfitAmount.toFixed(2)}`;
+  $("#higher-profit-month-amount").innerText = `+$${highestProfitAmount.toFixed(
+    2
+  )}`;
 };
 
 /*Higher spending month*/
@@ -713,7 +715,7 @@ const totalsByCategory = () => {
       (category) => category.id === categoryId
     )?.categoryName; //busca la categoria
 
-    const {ganancia, gasto} = totalsByCategory[categoryId];
+    const { ganancia, gasto } = totalsByCategory[categoryId];
     const balance = ganancia - gasto; //calcula balace
 
     renderedData.push({
@@ -777,7 +779,7 @@ const totalsByMonth = () => {
   const totals = [];
 
   for (const monthYear in totalsByMonth) {
-    const {ganancia, gasto} = totalsByMonth[monthYear];
+    const { ganancia, gasto } = totalsByMonth[monthYear];
     const balance = ganancia - gasto;
 
     totals.push({
@@ -797,7 +799,7 @@ const renderTotalsByMonth = (getTotalsByMonth) => {
   cleanContainer("#table-totals-month");
 
   for (const data of totalsByMonth) {
-    const {monthYear, ganancia, gasto, balance} = data;
+    const { monthYear, ganancia, gasto, balance } = data;
 
     $("#table-totals-month").innerHTML += `
     <tr class="flex justify-items-end">
@@ -837,8 +839,7 @@ const initializeApp = () => {
   setData("operations", allOperations);
   setData("categories", allCategories);
   setFilterDate();
-  filterOperations(allOperations)
-  renderOperations(allOperations);
+  filterOperations(allOperations);
   renderCategoriesTable(allCategories);
   renderCategoryOptions(allCategories);
   updateBalance(allOperations);
@@ -853,6 +854,19 @@ const initializeApp = () => {
 };
 
 /*EVENTS*/
+//Abrir menu responsive
+$("#btn-hamburguer-menu").addEventListener("click", () => {
+  showElement(["#menu-burguer", "#nav-bar", "#btn-close-menu"]);
+  hideElement(["#btn-hamburguer-menu"]);
+});
+
+//cerrar menu responsive
+$("#btn-close-menu").addEventListener("click", () => {
+  showElement(["#btn-hamburguer-menu"]);
+  hideElement(["#nav-bar", "#btn-close-menu"]);
+});
+
+//OPERACIONES
 //Boton agregar nueva operacion
 $("#new-operation-btn").addEventListener("click", () => {
   showElement(["#new-oparation-form"]);
@@ -864,9 +878,7 @@ $("#btn-add-operation").addEventListener("click", (e) => {
   e.preventDefault(); // no recargar el form
   if (validateOperation()) {
     addOperation();
-    hideElement(["#new-oparation-form"]);
-    showElement(["#main-view"]);
-    $("#new-oparation-form").reset();
+    $("#form-new-operation").reset();
   }
 });
 
@@ -893,58 +905,33 @@ $("#btn-confirm-edit-category").addEventListener("click", (e) => {
 //boton de cerrar ventana modal
 $("#btn-close-modal").addEventListener("click", () => {
   hideElement(["#delete-modal"]);
-  showElement(["#main-view"]);
 });
 
+//ocultar modal de eliminar operacion
 $("#btn-cancel-modal").addEventListener("click", () => {
   hideElement(["#delete-modal"]);
   showElement(["#main-view"]);
 });
 
+//CATEGORIAS
+//mostrar seccion categorias
 $("#btn-category").addEventListener("click", () => {
   hideElement(["#main-view", "#report-view"]);
   showElement(["#category-view"]);
 });
 
-$("#btn-add-category").addEventListener("click", (e) => {
+//agregar nueva categoria
+$("#btn-add-category").addEventListener("click", () => {
   addCategory();
-  $("#category-input").value = "";
+  $("#category-edit-input").value = "";
 });
 
-$("#btn-balance").addEventListener("click", () => {
-  showElement(["#main-view"]);
-  hideElement(["#category-view", "#new-oparation-form"]);
+//eliminar categoria
+$("#btn-delete-category").addEventListener("click", () => {
+  hideElement(["#delete-modal"]);
 });
 
-$("#btn-hamburguer-menu").addEventListener("click", () => {
-  $("#menu-burguer").classList.remove("hidden");
-  showElement(["#menu-burguer", "#nav-bar", "#btn-close-menu"]);
-  hideElement(["#btn-hamburguer-menu"]);
-  $([
-    "#main-view",
-    "category-view",
-    "#report-view",
-    "#new-oparation-view",
-  ]).classList.add("mt-20");
-});
-
-$("#btn-close-menu").addEventListener("click", () => {
-  showElement(["#btn-hamburguer-menu"]);
-  hideElement(["#nav-bar", "#btn-close-menu"]);
-  $([
-    "#main-view",
-    "category-view",
-    "#report-view",
-    "#new-oparation-view",
-  ]).classList.remove("mt-20");
-});
-
-$("#btn-confirm-edit-category").addEventListener("click", () => {
-  e.preventDefault();
-  editCategory();
-  window.location.reload();
-});
-
+//cancelar editar categoria
 $("#btn-cancel-edit-category").addEventListener("click", () => {
   showElement(["#category-view "]);
   hideElement(["#edit-categoy"]);
@@ -960,28 +947,49 @@ $("#btn-close-delete-category-modal").addEventListener("click", () => {
   hideElement(["#delete-category-modal"]);
 });
 
-$("#filter-hidden").addEventListener("click", () => {
+//BALANCE
+
+$("#btn-balance").addEventListener("click", () => {
+  showElement(["#main-view"]);
+  hideElement(["#category-view", "#new-oparation-form"]);
+});
+
+//FILTROS
+//ocultar filtro
+$("#filter-hidden").addEventListener("click", (e) => {
+  e.preventDefault();
   hideElement(["#filter-form", "#filter-hidden"]);
   showElement(["#filter-show"]);
 });
 
-$("#filter-show").addEventListener("click", () => {
+//mostrar filtros
+$("#filter-show").addEventListener("click", (e) => {
+  e.preventDefault();
   hideElement(["#filter-show"]);
   showElement(["#filter-form", "#filter-hidden"]);
 });
 
-$("#filter-category").addEventListener("input", (e) => {
-  const categoryId = e.target.value;
-  const currentData = getData("operations");
-  const filterOperations = currentData.filter(
-    (operations) => operations.category === categoryId
-  );
-  renderOperations(filterOperations);
+//filtros
+$("#section-filters").addEventListener("change", () => {
+  const operationsToFilter = getData("operations");
+  filterOperations(operationsToFilter);
 });
 
+// // $("#filter-category").addEventListener("input", (e) => {
+// //   const categoryId = e.target.value;
+// //   const currentData = getData("operations");
+// //   const filterOperations = currentData.filter(
+// //     (operations) => operations.category === categoryId
+// //   );
+// //   renderOperations(filterOperations);
+// // });
+
+//REPORTES
+//Mostrar reportes
 $("#btn-report").addEventListener("click", () => {
   hideElement(["#main-view", "#category-view"]);
   showElement(["#report-view"]);
+  filterOperations(allOperations);
 });
 
 window.addEventListener("load", initializeApp);
