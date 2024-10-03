@@ -1,7 +1,4 @@
 # 👋 Hola soy Nadia
-![image](https://github.com/user-attachments/assets/4e839269-58b8-4624-9506-fab5101a336b)
-
-
 ## Segundo trabajo integrador de JavaScript, de la carrera en Desarrollo FrontEnd en ADA ITW.
 **Descripción**
 
@@ -12,8 +9,6 @@ Esta aplicación web permite gestionar operaciones financieras, categorías y ge
 Operciones
 
 Agregar, editar y eliminar operaciones. Filtrar y ordenar operaciones por tipo, categoría, fecha y monto. Visualizar las operaciones en una tabla según filtros seleccionados.
-
-![image](https://github.com/user-attachments/assets/77bfc1b7-9707-4bb2-8647-2e554a6b8955)
 
 
 Categorías
