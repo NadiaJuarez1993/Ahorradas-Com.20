@@ -229,10 +229,10 @@ const renderCategoriesTable = (categories) => {
   const allCategories = getData("categories") || defaultCategories;
   for (const category of allCategories) {
     $("#table-category").innerHTML += `
-     <tr class="flex flex-wrap justify-between lg:flex-nowrap lg:items-center>          
+     <tr class="flex justify-items mx-4">          
      <td class="w-1/2 text-base mt-4">${category.categoryName}
      </td>
-        <td class="w-1/2 text-right lg:text-right">
+        <td class="w-1/2 text-base mt-4">
            <button onclick="showEditCategory('${category.id}')" ><a><img class="w-7 h-7" src="Images/icons-editar.png" alt="image"/></a></button>
            <button onclick="showDeleteCategoryModal('${category.id}', '${category.categoryName}')"><a><img class="w-7 h-7" src="Images/icons-eliminar.png" alt="image"/></a></button>
          </td>
@@ -953,7 +953,7 @@ $("#btn-close-delete-category-modal").addEventListener("click", () => {
 
 $("#btn-balance").addEventListener("click", () => {
   showElement(["#main-view"]);
-  hideElement(["#category-view", "#new-oparation-form"]);
+  hideElement(["#category-view", "#new-oparation-form", "#reports-results", "#report-view"]);
 });
 
 //FILTROS
